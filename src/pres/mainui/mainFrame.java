@@ -20,13 +20,18 @@ import java.util.ArrayList;
 import constantinfo.Constant;
 import pres.matchui.MatchMainPanel;
 import pres.matchui.SingleMatchPanel;
+import pres.playerui.DailyHotPlayerPanel;
+import pres.playerui.MostProgressedPanel;
 import pres.playerui.PlayerMainPanel;
 import pres.playerui.PlayerScreenPanel;
+import pres.playerui.SeasonHotPlayerPanel;
+import pres.playerui.SinglePlayerPanel;
 import pres.teamui.SeasonHotTeamPanel;
 import pres.teamui.SingleTeamPanel;
 import pres.teamui.TeamMainPanel;
 import pres.teamui.TeamPanel;
 import pres.uitools.CommonButton;
+import vo.playerVO;
 import vo.teamVO;
 
 public class mainFrame extends JFrame {
@@ -44,6 +49,11 @@ public class mainFrame extends JFrame {
 	TeamPanel teampanel;
 	SingleTeamPanel singleteampanel;
 	SeasonHotTeamPanel seasonhotteampanel;
+	SinglePlayerPanel singleplayerpanel;
+	MostProgressedPanel mostprogressedpanel;
+	SeasonHotPlayerPanel seasonhotplayerpanel;
+	DailyHotPlayerPanel dailyhotplayerpanel;
+	
 	
 	int locationX;
 	int locationY;
@@ -109,6 +119,34 @@ public class mainFrame extends JFrame {
 		setDragable(playermainpanel);
 		this.getContentPane().add(playermainpanel,"playermainpanel");
 		card.show(this.getContentPane(),"playermainpanel");
+	}
+	
+	public void showSinglePlayerPanel(playerVO playervo){
+		singleplayerpanel=new SinglePlayerPanel(playervo);
+		setDragable(singleplayerpanel);
+		this.getContentPane().add(singleplayerpanel, "singleplayerpanel");
+		card.show(this.getContentPane(), "singleplayerpanel");
+	}
+	
+	public void showSeasonHotPlayerPanel(ArrayList<playerVO> playervolist){
+		seasonhotplayerpanel =new SeasonHotPlayerPanel(playervolist);
+		setDragable(seasonhotplayerpanel);
+		this.getContentPane().add(seasonhotplayerpanel, "seasonhotplayerpanel");
+		card.show(this.getContentPane(), "seasonhotplayerpanel");
+	}
+	
+	public void showDailyHotPlayerPanel(String date){
+		dailyhotplayerpanel =new DailyHotPlayerPanel(date);
+		setDragable(dailyhotplayerpanel);
+		this.getContentPane().add(dailyhotplayerpanel, "dailyhotplayerpanel");
+		card.show(this.getContentPane(), "dailyhotplayerpanel");
+	}
+	
+	public void showMostProgressedPanel(ArrayList<playerVO> playervolist){
+		mostprogressedpanel =new MostProgressedPanel(playervolist);
+		setDragable(mostprogressedpanel);
+		this.getContentPane().add(mostprogressedpanel, "mostprogressedpanel");
+		card.show(this.getContentPane(), "mostprogressedpanel");
 	}
 	
 	public void showTeamMainPanel(){

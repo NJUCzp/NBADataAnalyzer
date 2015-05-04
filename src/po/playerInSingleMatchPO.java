@@ -3,7 +3,8 @@ package po;
 import java.io.Serializable;
 
 public class playerInSingleMatchPO implements Serializable{
-	private String season;
+	private String season="";
+	private String player="";
 	private String name="";
 	private String date="";
 	private String detailTimeOnCourt="";
@@ -32,6 +33,14 @@ public class playerInSingleMatchPO implements Serializable{
 	
 	public String getSeason(){
 		return season;
+	}
+	
+	public void setPlayer(String player){
+		this.player=player;
+	}
+	
+	public String getPlayer(){
+		return player;
 	}
 	
 	public void setName(String name){

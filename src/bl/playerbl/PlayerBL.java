@@ -1,7 +1,9 @@
 package bl.playerbl;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import po.playerInSingleMatchPO;
 import po.playerPO;
 import vo.playerVO;
 import vo.teamVO;
@@ -26,6 +28,15 @@ public class PlayerBL implements PlayerBLService{
 	@Override
 	public ArrayList<playerVO> sortBy(SortBy sortby,boolean isUP) {
 		playervolist=playerblfind.findAll();
+		PlayerBLSort sortplayer=new PlayerBLSort(playervolist,sortby,isUP);
+		sortplayer.sort(playervolist,0, playervolist.size()-1);
+		return playervolist;
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public ArrayList<playerVO> sortBy(SortBy sortby,boolean isUP,ArrayList<playerVO> playervolist) {
 		PlayerBLSort sortplayer=new PlayerBLSort(playervolist,sortby,isUP);
 		sortplayer.sort(playervolist,0, playervolist.size()-1);
 		return playervolist;
@@ -180,5 +191,21 @@ public class PlayerBL implements PlayerBLService{
 		else
 			return toscreenlist;
 	}
+
+	@Override
+	public ArrayList<playerInSingleMatchPO> findByDate(String date) {
+		// TODO Auto-generated method stub
+		return playerblfind.findByDate(date);
+	}
+
+	@Override
+	public ArrayList<playerInSingleMatchPO> sortByDaily(SortBy sortby,//默认从高到低
+			 ArrayList<playerInSingleMatchPO> dailyplayerlist) {
+		
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 
 }

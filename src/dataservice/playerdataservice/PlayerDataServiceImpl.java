@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import databaseservice.DataBaseServiceImpl;
 import po.playerInSingleMatchPO;
 import po.playerPO;
+import po.teamInSingleMatchPO;
 import po.teamPO;
 
 public class PlayerDataServiceImpl implements PlayerDataService{
@@ -236,7 +237,16 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 							singleplayer.setUsePercent(singleplayer.getUsePercent()+((double)singletotalshots+0.44*(double)singletotalfreethrow+(double)singletotalturnovers)*((double)visitingtotaltime/5.0)/(double)singletime/((double)hometotalshots+0.44*(double)hometotalfreethrows+(double)hometotalturnovers));
 						} 
 						
-						
+						if(singleplayer.getRecentFive().size()<5){
+							ArrayList<playerInSingleMatchPO> temp=singleplayer.getRecentFive();
+							temp.add(tempplayer);
+							singleplayer.setRecentFive(temp);
+						}else{
+							ArrayList<playerInSingleMatchPO> temp=singleplayer.getRecentFive();
+							temp.remove(0);
+							temp.add(tempplayer);
+							singleplayer.setRecentFive(temp);
+						}
 
 						
 					}
@@ -281,6 +291,54 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 		}*/
 		// TODO Auto-generated method stub
 		return playerAllInfo;
+	}
+	
+	public ArrayList<playerInSingleMatchPO> findByDate(String date){
+		ArrayList<playerInSingleMatchPO> dailyplayer=new ArrayList<playerInSingleMatchPO>();
+		File file=new File("E:/JavaWorkbench/NBAData/matches");
+		ArrayList<String> filetoopen=new ArrayList<String>();
+		
+		for(String singlefile:file.list()){
+			if(singlefile.contains(date))
+				filetoopen.add(singlefile);
+		}
+		
+		for(String dailyfile:filetoopen){
+			playerInSingleMatchPO tempplayer=new playerInSingleMatchPO();
+			ArrayList<String> singlematchinfo=new ArrayList<String>();
+			
+			DataBaseServiceImpl databaseservice=new DataBaseServiceImpl<String>("E:/JavaWorkbench/NBAData/matches"+dailyfile,singlematchinfo);
+			databaseservice.readFromfile();
+			
+			for(int i=3;i<singlematchinfo.size();i++){
+				if(singlematchinfo.get(i).length()>3){
+					String[] playerinfo=singlematchinfo.get(i).split(";");
+					String[] matchinfo=dailyfile.split("_");
+					tempplayer.setSeason(matchinfo[0]);
+					tempplayer.setDate(matchinfo[1]);
+					tempplayer.setName(matchinfo[2]);
+					tempplayer.setPlayer(playerinfo[0]);
+					tempplayer.setScore(Integer.parseInt(playerinfo[17]));
+					tempplayer.setAssists(Integer.parseInt(playerinfo[12]));
+					tempplayer.setRebounds(Integer.parseInt(playerinfo[11]));
+					tempplayer.setRejections(Integer.parseInt(playerinfo[14]));
+					tempplayer.setSteals(Integer.parseInt(playerinfo[13]));
+					tempplayer.setShotsOnTargets(Integer.parseInt(playerinfo[3]));
+					tempplayer.setTotalShots(Integer.parseInt(playerinfo[4]));
+					tempplayer.setThreePointShotsOnTargets(Integer.parseInt(playerinfo[5]));
+					tempplayer.setTotalThreePointShots(Integer.parseInt(playerinfo[6]));
+					tempplayer.setFreeThrowOnTargets(Integer.parseInt(playerinfo[7]));
+					tempplayer.setTotalFreeThrows(Integer.parseInt(playerinfo[8]));
+					tempplayer.setShotPercent((double)Integer.parseInt(playerinfo[3])/(double)Integer.parseInt(playerinfo[4]));
+					tempplayer.setThreePointPercent((double)Integer.parseInt(playerinfo[5])/(double)Integer.parseInt(playerinfo[6]));
+					tempplayer.setFreeThrowPercent((double)Integer.parseInt(playerinfo[7])/(double)Integer.parseInt(playerinfo[8]));
+					
+					dailyplayer.add(tempplayer);
+				}
+			}
+		}
+		return dailyplayer;
+		
 	}
 
 }

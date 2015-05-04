@@ -2,6 +2,7 @@ package bl.playerbl;
 
 import java.util.ArrayList;
 
+import po.playerInSingleMatchPO;
 import po.playerPO;
 import vo.playerVO;
 import vo.teamVO;
@@ -10,6 +11,7 @@ import constantinfo.SortBy;
 public class PlayerBLSort {
 	ArrayList<playerVO> playerlist;
 	ArrayList<playerVO> freeplayerlist;
+	ArrayList<playerInSingleMatchPO> dailyplayerlist;
 	SortBy sortby;
 	boolean isUP; 
 	public PlayerBLSort(ArrayList<playerVO> playerlist,SortBy sortby,boolean isUP){
@@ -17,6 +19,11 @@ public class PlayerBLSort {
 		this.sortby=sortby;
 		this.isUP=isUP;
 		checkEmpty();
+	}
+	
+	public PlayerBLSort(ArrayList<playerInSingleMatchPO> dailyplayerlist,SortBy sortby){
+		this.dailyplayerlist=dailyplayerlist;
+		this.sortby=sortby;
 	}
 	
 	public void sort(ArrayList<playerVO> playerlist,int l,int r){
@@ -32,6 +39,22 @@ public class PlayerBLSort {
 				playerlist.add(freeplayer);
 			freeplayerlist.clear();
 		}
+			
+	}
+	
+	public void dailysort(ArrayList<playerInSingleMatchPO> dailyplayerlist,int l,int r){
+		int middle;
+		if(l<r){
+			middle=dailypartition(dailyplayerlist,l,r);
+			dailysort(dailyplayerlist,l,middle-1);
+			dailysort(dailyplayerlist,middle+1,r);	
+		}
+		
+		/*if(freeplayerlist.size()>0){
+			for(playerVO freeplayer:freeplayerlist)
+				playerlist.add(freeplayer);
+			freeplayerlist.clear();
+		}*/
 			
 	}
 	
@@ -71,10 +94,45 @@ public class PlayerBLSort {
 			break;
 		}
 		
+		case PROGRESS_AVERAGE_SCORE:{
+			
+		}
+		
 		}
 		
 		playerlist.set(i,x);
 		return i;		
+	}
+	
+	public int dailypartition(ArrayList<playerInSingleMatchPO> dailyplayerlist,int l,int r){
+		int i=l;
+		int j=r;
+		
+		playerInSingleMatchPO x=dailyplayerlist.get(i);
+		switch (sortby){
+		case PLAYER_DAILY_SCORE:{
+			while(i<j){
+				while(i<j && dailyplayerlist.get(j).getScore()<=x.getScore())
+						j--;
+				
+				if(i<j){
+					dailyplayerlist.set(i, dailyplayerlist.get(j));
+				}
+					
+				while(i<j&& dailyplayerlist.get(i).getScore()>x.getScore())
+						i++;
+				
+				if(i<j){
+					playerlist.set(j, playerlist.get(i));
+				}
+					
+			}
+			break;
+		}
+		}
+		
+		dailyplayerlist.set(i,x);
+		return i;	
 	}
 	
 	public void checkEmpty(){

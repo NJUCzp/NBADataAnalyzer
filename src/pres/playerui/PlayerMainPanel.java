@@ -302,6 +302,7 @@ public class PlayerMainPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			Constant.mainframe.showSeasonHotPlayerPanel(playerlist);
 			// TODO Auto-generated method stub
 			
 		}
@@ -312,6 +313,7 @@ public class PlayerMainPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			Constant.mainframe.showMostProgressedPanel(playerlist);
 			// TODO Auto-generated method stub
 			
 		}
@@ -322,6 +324,8 @@ public class PlayerMainPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			String date="01-02";//先设为1月2日
+			Constant.mainframe.showDailyHotPlayerPanel(date);
 			// TODO Auto-generated method stub
 			
 		}

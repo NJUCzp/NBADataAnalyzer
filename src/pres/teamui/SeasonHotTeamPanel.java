@@ -110,7 +110,6 @@ public class SeasonHotTeamPanel extends CommonPanel {
 
 			length++;
 		}
-		//Ìí¼ÓÊý¾Ý
 		result=new CommonTable(resultdetail,resultcolomn);
 		result.setPreferredScrollableViewportSize(new Dimension(550,200));
 		result.setRowHeight(30);

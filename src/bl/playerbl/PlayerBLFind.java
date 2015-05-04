@@ -2,6 +2,7 @@ package bl.playerbl;
 
 import java.util.ArrayList;
 
+import po.playerInSingleMatchPO;
 import po.playerPO;
 import vo.playerVO;
 import dataservice.playerdataservice.PlayerDataService;
@@ -57,6 +58,10 @@ public class PlayerBLFind {
 		}
 		return playervolist;
 
+	}
+	
+	public ArrayList<playerInSingleMatchPO> findByDate(String date){
+		return playerdataservice.findByDate(date);
 	}
 
 }
