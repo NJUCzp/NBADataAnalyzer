@@ -3,6 +3,7 @@ package dataservice.playerdataservice;
 import java.io.File;
 import java.util.ArrayList;
 
+import constantinfo.Constant;
 import databaseservice.DataBaseServiceImpl;
 import po.playerInSingleMatchPO;
 import po.playerPO;
@@ -12,7 +13,7 @@ import po.teamPO;
 public class PlayerDataServiceImpl implements PlayerDataService{
 	ArrayList<playerPO> playerAllInfo=new ArrayList<playerPO>();
 	
-	public void initialData(){
+	public void initialData(String season){
 		//读入球员基本信息
 		File basicfile=new File("E:/JavaWorkbench/NBAData/players/info");
 		String[] basicplayerlist=basicfile.list();
@@ -29,15 +30,21 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 		//读入球员比赛信息
 		File matchfile=new File("E:/JavaWorkbench/NBAData/matches");
 		String[] matchlist=matchfile.list();
+		ArrayList<String> seasonmatchlist=new ArrayList<String>();
 		
 		for(String singlematch:matchlist){
+			if(singlematch.contains(season))
+				seasonmatchlist.add(singlematch);
+		}
+		
+		for(String singlematch:seasonmatchlist){
+						
 			ArrayList<String> playerMatchInfo=new ArrayList<String>();
-			playerInSingleMatchPO tempplayer=new playerInSingleMatchPO();
 			DataBaseServiceImpl playermatchdataservice=new DataBaseServiceImpl<String>("E:/JavaWorkbench/NBAData/matches"+"/"+singlematch,playerMatchInfo);
 			playermatchdataservice.readFromfile();
 			//确定主客队
 			String hometeam=playerMatchInfo.get(0).split(";")[1].split("-")[0];
-			String visitingteam=playerMatchInfo.get(0).split(";")[1].split("-")[0];
+			String visitingteam=playerMatchInfo.get(0).split(";")[1].split("-")[1];
 			//搜索球员队伍
 			int homeposition=2;
 			int visitingposition=3;
@@ -113,6 +120,7 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 			}
 			
 			boolean ishome=true;//判断是否为主队
+			
 			for(int i=3;i<playerMatchInfo.size();i++){
 				if (playerMatchInfo.get(i).length()==3){
 					ishome=false;
@@ -131,7 +139,9 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 					}
 				}
 				
+				
 				int singletime=Integer.parseInt(playerdetail[2].split(":")[0]);
+				String singledetailtime=playerdetail[2];
 				int singleshotontarget=Integer.parseInt(playerdetail[3]);
 				int singletotalshots=Integer.parseInt(playerdetail[4]);
 				int singlethreeontargets=Integer.parseInt(playerdetail[5]);
@@ -153,14 +163,27 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 				
 				for(playerPO singleplayer:playerAllInfo){
 					if(singleplayer.getName().equals(playerdetail[0])){
+						playerInSingleMatchPO tempplayer=new playerInSingleMatchPO();
+						
+						/*if(singleplayer.getName().equals("Aaron Brooks")){
+							System.out.println(singleplayer.getName());
+							System.out.println(singlematch);
+							System.out.println(ishome);
+							System.out.println(singledetailtime);
+						}*/
+						
+						
+						
 						singleplayer.setTotalMatches(singleplayer.getTotalMatches()+1);
 						if(playerdetail[1].length()==1)
 							singleplayer.setStartingMatches(singleplayer.getStartingMatches()+1);
 						
 						String[]matchbasicinfo=singlematch.split("_");
 						
+						tempplayer.setSeason(matchbasicinfo[0]);
 						tempplayer.setDate(matchbasicinfo[1]);
 						tempplayer.setName(matchbasicinfo[2]);
+						tempplayer.setDetailTimeOnCourt(singledetailtime);
 						tempplayer.setAssists(singletotalassists);
 						tempplayer.setScore(singletotalscores);
 						tempplayer.setRebounds(singletotalrebounds);
@@ -243,9 +266,47 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 							singleplayer.setRecentFive(temp);
 						}else{
 							ArrayList<playerInSingleMatchPO> temp=singleplayer.getRecentFive();
+							
 							temp.remove(0);
 							temp.add(tempplayer);
 							singleplayer.setRecentFive(temp);
+						}
+						
+						if(singleplayer.getName().equals("Aaron Brooks")){
+							System.out.println(singleplayer.getName());
+							System.out.println(singlematch);
+							System.out.println(ishome);
+							System.out.println(singledetailtime);
+							for(playerInSingleMatchPO s:singleplayer.getRecentFive()){
+								System.out.println(s.getDetailTimeOnCourt());
+							}
+						}
+						
+						
+						
+						if(Constant.ATLANTIC_TEAM.indexOf(singleplayer.getTeam().toLowerCase())>=0){
+							singleplayer.setLeague("ATLANTIC");
+							continue;
+						}
+						if(Constant.CENTRAL_TEAM.indexOf(singleplayer.getTeam().toLowerCase())>=0){
+							singleplayer.setLeague("CENTRAL");
+							continue;
+						}
+						if(Constant.NORTHWEST_TEAM.indexOf(singleplayer.getTeam().toLowerCase())>=0){
+							singleplayer.setLeague("NORTHWEST");
+							continue;
+						}
+						if(Constant.PACIFIC_TEAM.indexOf(singleplayer.getTeam().toLowerCase())>=0){
+							singleplayer.setLeague("PACIFIC");
+							continue;
+						}
+						if(Constant.SOUTHEAST_TEAM.indexOf(singleplayer.getTeam().toLowerCase())>=0){
+							singleplayer.setLeague("SOUTHEAST");
+							continue;
+						}
+						if(Constant.SOUTHWEST_TEAM.indexOf(singleplayer.getTeam().toLowerCase())>=0){
+							singleplayer.setLeague("SOUTHWEST");
+							continue;
 						}
 
 						
@@ -277,14 +338,26 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 			playerlist.setFreeThrowPercent((double)playerlist.getTotalFreeThrows()/(double)playerlist.getFreeThrowOnTargets());
 		}
 		
-		DataBaseServiceImpl dataBaseServiceWrite=new DataBaseServiceImpl<playerPO>("tempdata/player.tpd",playerAllInfo);
+		DataBaseServiceImpl dataBaseServiceWrite=new DataBaseServiceImpl<playerPO>("tempdata/player"+season+".tpd",playerAllInfo);
 		dataBaseServiceWrite.write();
 
 	}
 
 	@Override
-	public ArrayList<playerPO> finaAll() {
-		DataBaseServiceImpl databaseservice=new DataBaseServiceImpl<playerPO>("tempdata/player.tpd",playerAllInfo);
+	public ArrayList<playerPO> finaAll(String season) {
+		File file=new File("tempdata");
+		String[] tempdata=file.list();
+		boolean exist=false;//判断当赛季数据是否已经存在
+		
+		for(String datafile:tempdata){
+			if(datafile.contains("player")&&datafile.contains(season))
+				exist=true;
+		}
+		
+		if(!exist)
+			initialData(season);
+		
+		DataBaseServiceImpl databaseservice=new DataBaseServiceImpl<playerPO>("tempdata/player"+season+".tpd",playerAllInfo);
 		databaseservice.readFromTemp();
 		/*for(playerPO singleplayer:playerAllInfo){
 			System.out.println(singleplayer.getTotalShots());
@@ -303,21 +376,23 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 				filetoopen.add(singlefile);
 		}
 		
+		
 		for(String dailyfile:filetoopen){
-			playerInSingleMatchPO tempplayer=new playerInSingleMatchPO();
 			ArrayList<String> singlematchinfo=new ArrayList<String>();
 			
-			DataBaseServiceImpl databaseservice=new DataBaseServiceImpl<String>("E:/JavaWorkbench/NBAData/matches"+dailyfile,singlematchinfo);
+			DataBaseServiceImpl databaseservice=new DataBaseServiceImpl<String>("E:/JavaWorkbench/NBAData/matches/"+dailyfile,singlematchinfo);
 			databaseservice.readFromfile();
-			
+						
 			for(int i=3;i<singlematchinfo.size();i++){
 				if(singlematchinfo.get(i).length()>3){
+					playerInSingleMatchPO tempplayer=new playerInSingleMatchPO();
 					String[] playerinfo=singlematchinfo.get(i).split(";");
 					String[] matchinfo=dailyfile.split("_");
 					tempplayer.setSeason(matchinfo[0]);
 					tempplayer.setDate(matchinfo[1]);
 					tempplayer.setName(matchinfo[2]);
 					tempplayer.setPlayer(playerinfo[0]);
+					tempplayer.setDetailTimeOnCourt(playerinfo[2]);
 					tempplayer.setScore(Integer.parseInt(playerinfo[17]));
 					tempplayer.setAssists(Integer.parseInt(playerinfo[12]));
 					tempplayer.setRebounds(Integer.parseInt(playerinfo[11]));

@@ -29,11 +29,12 @@ public class TeamPanel extends CommonPanel{
 	ArrayList<JSVGCanvas> portraits;
 	//ArrayList<CommonButton> buttons;
 	
+	String season="13-14";
 	ArrayList<teamVO> teamvolist;
 	TeamBLService teamblservice;
 	
 	public TeamPanel() {
-		super("graphics/detailpanel/detail_background.png");
+		super("graphics/detailpanel/detail_background2.jpeg");
 		teamblservice=new TeamBL();
 		portraits=new ArrayList<JSVGCanvas>();
 		Font font1=new Font("Î¢ÈíÑÅºÚ",Font.BOLD,12);
@@ -74,7 +75,6 @@ public class TeamPanel extends CommonPanel{
 		String[]filelist=file.list();
 		
 		int beginyear=Integer.parseInt(season.split("-")[0]);
-		int length=0;
 		for(String singlefile:filelist){
 			if(singlefile.contains(".svg")){
 				if(beginyear<13&&singlefile.contains("NOP"))
@@ -89,24 +89,25 @@ public class TeamPanel extends CommonPanel{
 			}
 		}
 		
-		length=0;
-		for(JSVGCanvas svg:portraits){
-			svg.setSize(100, 100);
-			svg.setLocation(162+120*(length%6), 100+110*(length/6));
-			svg.setVisible(true);
-			svg.addMouseListener(new svgadapter(svg.getURI()));
-			functionlabel.add(svg);
-			length++;
+		//int length=0;
+		for(int length=0;length<portraits.size();length++){
+			portraits.get(length).setSize(100, 100);
+			portraits.get(length).setLocation(162+120*(length%6), 100+110*(length/6));
+			portraits.get(length).setVisible(true);
+			portraits.get(length).addMouseListener(new svgadapter(portraits.get(length).getURI()));
+			functionlabel.add(portraits.get(length));
+			//length++;
 		}
 		
 		//¿¼ÂÇ»Æ·ä
 		if(beginyear<13){
-			CommonButton NOH=new CommonButton("","","");
+			CommonButton NOH=new CommonButton("E:/Javaworkbench/NBAData/teams/NOH.jpg","E:/Javaworkbench/NBAData/teams/NOH.jpg","E:/Javaworkbench/NBAData/teams/NOH.jpg");
 			NOH.setSize(100, 100);
 			NOH.setLocation(862, 640);
 			NOH.addActionListener(new NOHlistener());
 			NOH.setVisible(true);
 			functionlabel.add(NOH);
+			System.out.println("add");
 		}
 
 	}
@@ -116,7 +117,7 @@ public class TeamPanel extends CommonPanel{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if(teamvolist==null)
-				teamvolist=teamblservice.findAll();
+				teamvolist=teamblservice.findAll(season);
 			
 			for(teamVO teamvo:teamvolist){
 				if(teamvo.shortname.equals("NOH"))
@@ -140,7 +141,7 @@ public class TeamPanel extends CommonPanel{
 			System.out.println(teamname);
 			
 			if(teamvolist==null)
-				teamvolist=teamblservice.findAll();
+				teamvolist=teamblservice.findAll(season);
 			
 			System.out.println(teamvolist.size());
 			
@@ -181,6 +182,12 @@ public class TeamPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			season=seasons.getSelectedItem().toString();
+			
+			//for(JSVGCanvas portrait:portraits)
+				//functionlabel.remove(portrait);
+			portraits.clear();
+			addPortraits(season);
 			
 			Constant.mainframe.repaint();
 			// TODO Auto-generated method stub
@@ -194,7 +201,7 @@ public class TeamPanel extends CommonPanel{
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
 			if(teamvolist==null)
-				teamvolist=teamblservice.findAll();
+				teamvolist=teamblservice.findAll(season);
 			
 			Constant.mainframe.showSeasonHotTeamPanel(teamvolist);
 			// TODO Auto-generated method stub

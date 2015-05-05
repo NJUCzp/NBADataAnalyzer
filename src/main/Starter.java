@@ -11,7 +11,7 @@ public class Starter {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		File datafile=new File("tempdata");
+		/*File datafile=new File("tempdata");
 		TeamDataServiceImpl teamdataservice;
 		PlayerDataServiceImpl playerdataservice;
 		if(datafile.list().length==0){
@@ -19,7 +19,7 @@ public class Starter {
 			teamdataservice=new TeamDataServiceImpl();
 			playerdataservice.initialData();
 			teamdataservice.initialData();
-		}
+		}*/
 		
 		mainFrame mainframe=new mainFrame();
 		mainframe.showMainPanel();

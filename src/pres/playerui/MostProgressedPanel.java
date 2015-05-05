@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -44,6 +45,11 @@ public class MostProgressedPanel extends CommonPanel{
 		this.playervolist=playervolist;
 		firstfive=new ArrayList<playerVO>();
 		playerblservice=new PlayerBL();
+		
+		playerinfo=new JLabel(new ImageIcon("graphics/detailpanel/playerinfo_label.png"));
+		playerinfo.setBounds(500, 20, 180, 45);
+		playerinfo.setVisible(true);
+		functionlabel.add(playerinfo);
 		
 		String[] screenby={"场均得分","场均篮板","场均助攻"};
 		ScreenBy=new JComboBox(screenby);
@@ -98,8 +104,49 @@ public class MostProgressedPanel extends CommonPanel{
 			}
 			break;
 			}
-		case 1:{sortby=SortBy.PROGRESS_AVERAGE_REBOUND;break;}
-		case 2:{sortby=SortBy.PROGRESS_AVERAGE_ASSIST;break;}
+		case 1:{
+			sortby=SortBy.PROGRESS_AVERAGE_REBOUND;
+			for(playerVO playervo:playervolist){
+				if(playervo.recentFive.size()<6)
+					continue;
+				else{
+					//计算五场之前的数据
+					int totalreboundbefore=playervo.totalRebounds;	
+					for(int i=0;i<5;i++){
+						totalreboundbefore=totalreboundbefore-playervo.recentFive.get(i).getRebounds();
+					}
+					
+					if(totalreboundbefore<=0)
+						continue;
+					else{
+						double A=(double)totalreboundbefore/(double)playervo.totalMatches-5;
+						double B=(double)(playervo.totalRebounds-totalreboundbefore)/5.0;
+						playervo.progress=(B-A)/A;
+					}
+				}
+			}
+			break;}
+		case 2:{sortby=SortBy.PROGRESS_AVERAGE_ASSIST;
+		for(playerVO playervo:playervolist){
+			if(playervo.recentFive.size()<6)
+				continue;
+			else{
+				//计算五场之前的数据
+				int totalassistbefore=playervo.totalAssists;	
+				for(int i=0;i<5;i++){
+					totalassistbefore=totalassistbefore-playervo.recentFive.get(i).getAssists();
+				}
+				
+				if(totalassistbefore<=0)
+					continue;
+				else{
+					double A=(double)totalassistbefore/(double)playervo.totalMatches-5;
+					double B=(double)(playervo.totalAssists-totalassistbefore)/5.0;
+					playervo.progress=(B-A)/A;
+				}
+			}
+		}
+			break;}
 		default:{}
 		}
 		
@@ -132,7 +179,7 @@ public class MostProgressedPanel extends CommonPanel{
 			length++;
 		}
 		result=new CommonTable(resultdetail,resultcolomn);
-		result.setPreferredScrollableViewportSize(new Dimension(550,200));
+		result.setPreferredScrollableViewportSize(new Dimension(550,180));
 		result.setRowHeight(30);
 		result.setFont(new Font("微软雅黑",Font.BOLD,15));
 		//FitTableColumns(table);
@@ -144,7 +191,7 @@ public class MostProgressedPanel extends CommonPanel{
 		}*/
 		result.addMouseListener(new tableadapter());
 		result.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		result.getTableHeader().setPreferredSize(new Dimension (result.getTableHeader().getMinimumSize().width,30));
+		//result.getTableHeader().setPreferredSize(new Dimension (result.getTableHeader().getMinimumSize().width,30));
 		result.updateUI();
 
 		scroll = new JScrollPane();
@@ -212,7 +259,7 @@ public class MostProgressedPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Constant.mainframe.showTeamPanel();
+			Constant.mainframe.showPlayerMainPanel();
 			// TODO Auto-generated method stub
 			
 		}

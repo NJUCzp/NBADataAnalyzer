@@ -12,9 +12,9 @@ public class TeamBLFind {
 	public TeamBLFind(){
 		teamdataservice=new TeamDataServiceImpl();
 	}
-	public ArrayList<teamVO> finaAll(){
+	public ArrayList<teamVO> finaAll(String season){
 		ArrayList<teamVO> teamvolist=new ArrayList<teamVO>();
-		ArrayList<teamPO> teampolist=teamdataservice.findAll();
+		ArrayList<teamPO> teampolist=teamdataservice.findAll(season);
 		
 		for(int i=0;i<teampolist.size();i++){
 			teamVO list=new teamVO();

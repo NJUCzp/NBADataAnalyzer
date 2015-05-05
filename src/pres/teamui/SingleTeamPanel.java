@@ -46,7 +46,7 @@ public class SingleTeamPanel extends CommonPanel{
 	
 	//可以考虑传入teamvo
 	public SingleTeamPanel(teamVO teamvo) {
-		super("graphics/detailpanel/detail_background.png");
+		super("graphics/detailpanel/detail_background2.jpeg");
 		teamblservice=new TeamBL();
 		
 		//Font font1=new Font("微软雅黑",Font.BOLD,12);

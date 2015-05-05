@@ -24,6 +24,7 @@ import constantinfo.ScreenBy;
 import constantinfo.SortBy;
 import pres.playerui.PlayerMainPanel.backlistener;
 import pres.playerui.PlayerMainPanel.screenlistener;
+import pres.playerui.PlayerMainPanel.seasonslistener;
 import pres.uitools.CommonButton;
 import pres.uitools.CommonPanel;
 import pres.uitools.CommonTable;
@@ -46,11 +47,13 @@ public class PlayerScreenPanel extends CommonPanel{
 	JLabel sortby;
 	JLabel range;
 	
+	JComboBox seasons;
 	JComboBox positions;
 	JComboBox EW;
 	JComboBox Leagues;
 	JComboBox sortbys;
 	
+	String season;
 	PlayerBLService playerblservice;
 	ArrayList<playerVO> screenedlist; 
 	Object[][] screeneddata;
@@ -182,6 +185,14 @@ public class PlayerScreenPanel extends CommonPanel{
 		sortbys.setVisible(true);
 		functionlabel.add(sortbys);
 		
+		seasons=new JComboBox(new String[]{"12-13","13-14","14-15"});
+		seasons.setBounds(140, 300, 120, 35);
+		seasons.setFont(font1);
+		seasons.setBorder(BorderFactory.createEmptyBorder());
+		seasons.setSelectedItem(null);
+		//seasons.addActionListener(new seasonslistener());
+		seasons.setVisible(true);
+		functionlabel.add(seasons);
 		/*F.setBounds(300, 300, 80, 30);
 		F.setVisible(true);
 		functionlabel.add(F);
@@ -302,6 +313,7 @@ public class PlayerScreenPanel extends CommonPanel{
 			int toscreeneorw=EW.getSelectedIndex();
 			int toscreenleagues=Leagues.getSelectedIndex();
 			int toscreensortbys=sortbys.getSelectedIndex();
+			String season=seasons.getSelectedItem().toString();
 			
 			ArrayList<ScreenBy> toscreen=new ArrayList<ScreenBy>();
 			SortBy sort=SortBy.SCREEN_SCORE;//默认按总得分筛选
@@ -391,7 +403,8 @@ public class PlayerScreenPanel extends CommonPanel{
 			functionlabel.remove(sortby);
 			functionlabel.remove(sortbys);
 			
-			screenedlist=playerblservice.screen(toscreen,sort);//返回一组已筛选的且大小符合要求的球员信息
+			
+			screenedlist=playerblservice.screen(toscreen,sort,playerblservice.findAll(season));//返回一组已筛选的且大小符合要求的球员信息
 						
 			//String[] colomn = {"球员姓名","位置","联盟","得分","篮板","助攻","得分/篮板/助攻","盖帽","抢断","犯规","失误","分钟","效率","投篮","三分","罚球","两双"};
 			String[] colomn = {"球员姓名","位置","得分","篮板","助攻","得分/篮板/助攻","盖帽","抢断","犯规","失误","分钟","效率","投篮","三分","罚球","两双"};

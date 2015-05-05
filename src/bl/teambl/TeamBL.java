@@ -11,20 +11,20 @@ public class TeamBL implements TeamBLService{
 	ArrayList<teamVO> teamvolist=new ArrayList<teamVO>();
 
 	@Override
-	public ArrayList<teamVO> findAll() {
-		teamvolist=teamblfind.finaAll();
+	public ArrayList<teamVO> findAll(String season) {
+		teamvolist=teamblfind.finaAll(season);
 		// TODO Auto-generated method stub
 		return teamvolist;
 	}
 
-	@Override
+	/*@Override
 	public ArrayList<teamVO> sortBy(SortBy sortby,boolean isUP) {
 		teamvolist=teamblfind.finaAll();
 		TeamBLSort sortteam=new TeamBLSort(teamvolist,sortby,isUP);
 		sortteam.sort(teamvolist,0,teamvolist.size()-1);
 		// TODO Auto-generated method stub
 		return teamvolist;
-	}
+	}*/
 
 	@Override
 	public ArrayList<teamVO> sortBy(SortBy sortby, boolean isUP,

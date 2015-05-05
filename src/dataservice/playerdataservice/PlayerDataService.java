@@ -6,8 +6,8 @@ import po.playerInSingleMatchPO;
 import po.playerPO;
 
 public interface PlayerDataService {
-	public void initialData();
-	public ArrayList<playerPO> finaAll();
+	public void initialData(String season);
+	public ArrayList<playerPO> finaAll(String season);
 	public ArrayList<playerInSingleMatchPO> findByDate(String date);
 
 }

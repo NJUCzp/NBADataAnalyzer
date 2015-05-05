@@ -10,9 +10,12 @@ import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 
 import constantinfo.Constant;
 import constantinfo.SortBy;
@@ -32,7 +35,9 @@ public class DailyHotPlayerPanel extends CommonPanel{
 	CommonButton back;
 	CommonButton screen;
 	CommonTable result;
+	JLabel playerinfo;
 	
+	String season="13-14";//先设成13-14赛季
 	String date="01-02";//先设成1月2日
 	
 	ArrayList<playerVO> playervolist;
@@ -50,6 +55,11 @@ public class DailyHotPlayerPanel extends CommonPanel{
 		ArrayList<String> days=new ArrayList<String>();
 		File file=new File("E:/JavaWorkbench/NBAData/matches");
 		String[] matchinfo=file.list();
+		
+		playerinfo=new JLabel(new ImageIcon("graphics/detailpanel/playerinfo_label.png"));
+		playerinfo.setBounds(500, 20, 180, 45);
+		playerinfo.setVisible(true);
+		functionlabel.add(playerinfo);
 		
 		/*for(String singlematch:matchinfo){
 			String date=singlematch.split(";")[1];
@@ -118,6 +128,7 @@ public class DailyHotPlayerPanel extends CommonPanel{
 		default:{}
 		}
 		ArrayList<playerInSingleMatchPO> dailyPlayer=playerblservice.findByDate(date);
+		dailyPlayer=playerblservice.sortByDaily(sortby, dailyPlayer);		
 		//排序
 		Object[] dailycolomn=new String[]{"球员姓名","赛季","比赛日期","比赛双方","上场时间","得分","助攻","篮板","盖帽","抢断","投篮命中率","三分命中率","罚球命中率"};
 		Object[][] dailydetail=new Object[5][13];
@@ -126,6 +137,7 @@ public class DailyHotPlayerPanel extends CommonPanel{
 		for(playerInSingleMatchPO singleplayer:dailyPlayer){
 			if(length>4)
 				break;
+
 			dailydetail[length][0]=singleplayer.getPlayer();
 			dailydetail[length][1]=singleplayer.getSeason();
 			dailydetail[length][2]=singleplayer.getDate();
@@ -144,19 +156,23 @@ public class DailyHotPlayerPanel extends CommonPanel{
 		}
 		
 		result=new CommonTable(dailydetail,dailycolomn);
-		result.setPreferredScrollableViewportSize(new Dimension(550,200));
+		result.setPreferredScrollableViewportSize(new Dimension(550,180));
 		result.setRowHeight(30);
 		result.setFont(new Font("微软雅黑",Font.BOLD,15));
 		//FitTableColumns(table);
 		
-		/*for(int i=0;i<allmatches.getColumnCount();i++){
-			TableColumn tc=allmatches.getColumn(allmatches.getColumnName(i));  
-	        tc.setMinWidth(150);
+		for(int i=0;i<result.getColumnCount();i++){
+			TableColumn tc=result.getColumn(result.getColumnName(i));  
+	        if(i==0) 
+		        tc.setMinWidth(150);
+	        else
+	        	tc.setMinWidth(80);
 
-		}*/
+		}
+		
 		result.addMouseListener(new tableadapter());
 		result.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		result.getTableHeader().setPreferredSize(new Dimension (result.getTableHeader().getMinimumSize().width,30));
+		//result.getTableHeader().setPreferredSize(new Dimension (result.getTableHeader().getMinimumSize().width,30));
 		result.updateUI();
 
 		scroll = new JScrollPane();
@@ -174,7 +190,7 @@ public class DailyHotPlayerPanel extends CommonPanel{
 			if(e.getClickCount()==2){
 				int index=result.getSelectedRow();
 				String nametofind=result.getValueAt(index, 0).toString();
-				ArrayList<playerVO> playervolist=playerblservice.findAll();
+				ArrayList<playerVO> playervolist=playerblservice.findAll(season);
 				for(playerVO player:playervolist){
 					if(player.name.equals(nametofind))
 						Constant.mainframe.showSinglePlayerPanel(player);
@@ -230,7 +246,7 @@ public class DailyHotPlayerPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Constant.mainframe.showTeamPanel();
+			Constant.mainframe.showPlayerMainPanel();
 			// TODO Auto-generated method stub
 			
 		}

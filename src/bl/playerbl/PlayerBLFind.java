@@ -13,9 +13,9 @@ public class PlayerBLFind {
 	public PlayerBLFind(){
 		playerdataservice=new PlayerDataServiceImpl();
 	}
-	public ArrayList<playerVO> findAll(){
+	public ArrayList<playerVO> findAll(String season){
 		ArrayList<playerVO> playervolist=new ArrayList<playerVO>();
-		ArrayList<playerPO> playerpolist=playerdataservice.finaAll();
+		ArrayList<playerPO> playerpolist=playerdataservice.finaAll(season);
 		
 		for(int i=0;i<playerpolist.size();i++){
 			playerVO list=new playerVO();
@@ -35,6 +35,7 @@ public class PlayerBLFind {
 			list.startingMatches=playerpolist.get(i).getStartingMatches();
 			list.stealPercent=playerpolist.get(i).getStealPercent();
 			list.team=playerpolist.get(i).getTeam();
+			list.league=playerpolist.get(i).getLeague();
 			list.threePointPercent=playerpolist.get(i).getThreePointPercent();
 			list.totalScores=playerpolist.get(i).getTotalScores();
 			list.totalshots=playerpolist.get(i).getTotalShots();
@@ -53,6 +54,7 @@ public class PlayerBLFind {
 			list.totalTurnovers=playerpolist.get(i).getTotalTurnovers();
 			list.turnoverPercent=playerpolist.get(i).getTurnoverPercent();
 			list.usePercent=playerpolist.get(i).getUsePercent();
+			list.recentFive=playerpolist.get(i).getRecentFive();
 			
 			playervolist.add(list);
 		}

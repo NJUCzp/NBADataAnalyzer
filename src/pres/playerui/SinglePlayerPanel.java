@@ -13,9 +13,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 
 import constantinfo.Constant;
 import po.playerInSingleMatchPO;
+import pres.playerui.SeasonHotPlayerPanel.backlistener;
 import pres.uitools.CommonButton;
 import pres.uitools.CommonPanel;
 import pres.uitools.CommonTable;
@@ -31,21 +33,31 @@ public class SinglePlayerPanel extends CommonPanel{
 	CommonTable basicinfo;
 	CommonTable recent;
 	CommonButton back;
+	JLabel playerinfo;
 	
 	playerVO playervo;
 
-	public SinglePlayerPanel(playerVO playervo) {
-		super("graphics/detailpanel/detail_background.png");
+	public SinglePlayerPanel(playerVO playervo) {		
+		super("graphics/detailpanel/detail_background2.jpeg");
 		Font font1=new Font("微软雅黑",Font.BOLD,12);
 		this.playervo=playervo;
 		
-		portraits=new JLabel(new ImageIcon("E:/JavaWorkbench/NBAData/players/portrait"+playervo.name+".png"));
-		portraits.setBounds(150, 150, 200, 200);
+		System.out.print(playervo.recentFive.get(4).getDetailTimeOnCourt());
+
+		
+		playerinfo=new JLabel(new ImageIcon("graphics/detailpanel/playerinfo_label.png"));
+		playerinfo.setBounds(500, 20, 180, 45);
+		playerinfo.setVisible(true);
+		functionlabel.add(playerinfo);
+		
+		portraits=new JLabel(new ImageIcon("E:/JavaWorkbench/NBAData/players/portrait/"+playervo.name+".png"));
+		portraits.setBounds(300, 60, 200, 300);
 		portraits.addMouseListener(new portraitadapter());
 		portraits.setVisible(true);
+		functionlabel.add(portraits);
 		
 		convert=new JComboBox(new String[]{"基本信息","比赛信息"});
-		convert.setBounds(140, 150, 120, 35);
+		convert.setBounds(600, 120, 120, 35);
 		convert.setFont(font1);
 		convert.setBorder(BorderFactory.createEmptyBorder());
 		convert.setSelectedItem(null);
@@ -54,7 +66,7 @@ public class SinglePlayerPanel extends CommonPanel{
 		functionlabel.add(convert);
 		
 		seasons=new JComboBox(new String[]{"12-13","13-14","14-15"});
-		seasons.setBounds(140, 150, 120, 35);
+		seasons.setBounds(750, 120, 120, 35);
 		seasons.setFont(font1);
 		seasons.setBorder(BorderFactory.createEmptyBorder());
 		seasons.setSelectedItem(null);
@@ -65,7 +77,7 @@ public class SinglePlayerPanel extends CommonPanel{
 		addTable(0);//添加基本信息/比赛信息,默认基本信息
 		
 		Object[][] recentdetail=new Object[5][15];
-		Object[] recentcolomn=new String[]{"赛季","日期","比赛双方","上场时间","得分","总篮板","总助攻","总盖帽","总抢断","投篮命中/出手","投篮命中率","罚球命中/出手","罚球命中率","三分命中/出手","三分命中率"};
+		Object[] recentcolomn=new String[]{"赛季","日期","比赛双方","上场时间","得分","总篮板","总助攻","总盖帽","总抢断","投篮命中/出手","投篮命中率","三分命中/出手","三分命中率","罚球命中/出手","罚球命中率"};
 		//添加数据
 		int length=0;
 		for(playerInSingleMatchPO singleplayer:playervo.recentFive){
@@ -82,24 +94,30 @@ public class SinglePlayerPanel extends CommonPanel{
 			recentdetail[length][10]=singleplayer.getShotPercent();
 			recentdetail[length][11]=singleplayer.getThreePointShotsOnTargets()+"/"+singleplayer.getTotalThreePointShots();
 			recentdetail[length][12]=singleplayer.getThreePointPercent();
-			recentdetail[length][13]=singleplayer.getFreeThrowOnTargets()+singleplayer.getTotalFreeThrows();
+			recentdetail[length][13]=singleplayer.getFreeThrowOnTargets()+"/"+singleplayer.getTotalFreeThrows();
 			recentdetail[length][14]=singleplayer.getFreeThrowPercent();
 			length++;
 		}
 		recent=new CommonTable(recentdetail,recentcolomn);
-		recent.setPreferredScrollableViewportSize(new Dimension(500,250));
-		recent.setRowHeight(20);
+		recent.setPreferredScrollableViewportSize(new Dimension(290,400));
+		recent.setRowHeight(30);
 		recent.setFont(new Font("微软雅黑",Font.BOLD,15));
 		recent.addMouseListener(new tableadapter());
 		recent.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		recent.updateUI();
 		
 		recentscroll = new JScrollPane(recent);
-		recentscroll.setLocation(450,250);
-		recentscroll.setSize(500, 250);
+		recentscroll.setLocation(290,400);
+		recentscroll.setSize(500, 160);
 		//scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED); 
 		recentscroll.setVisible(true);
 		functionlabel.add(recentscroll);
+		
+		back=new CommonButton("graphics/actionbutton/back_pressed.png","graphics/actionbutton/back_pressed.png","graphics/actionbutton/back.png");
+		back.setBounds(392, 600, 240, 60);
+		back.setVisible(true);
+		back.addActionListener(new backlistener());
+		functionlabel.add(back);
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -120,24 +138,24 @@ public class SinglePlayerPanel extends CommonPanel{
 			
 			basicinfo=new CommonTable(basicdetail,basiccolomn);
 			
-			basicinfo.setPreferredScrollableViewportSize(new Dimension(160,150));
+			basicinfo.setPreferredScrollableViewportSize(new Dimension(600,180));
 			basicinfo.setRowHeight(30);
 			basicinfo.setFont(new Font("微软雅黑",Font.BOLD,15));
 			//FitTableColumns(table);
 			
-			/*for(int i=0;i<allmatches.getColumnCount();i++){
-				TableColumn tc=allmatches.getColumn(allmatches.getColumnName(i));  
+			for(int i=0;i<basicinfo.getColumnCount();i++){
+				TableColumn tc=basicinfo.getColumn(basicinfo.getColumnName(i));  
 		        tc.setMinWidth(150);
 
-			}*/
+			}
 			basicinfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			basicinfo.getTableHeader().setPreferredSize(new Dimension (basicinfo.getTableHeader().getMinimumSize().width,30));
+			//basicinfo.getTableHeader().setPreferredSize(new Dimension (basicinfo.getTableHeader().getMinimumSize().width,30));
 			basicinfo.updateUI();
 
 			scroll = new JScrollPane();
 			scroll.setViewportView(basicinfo);
-			scroll.setLocation(700,180);
-			scroll.setSize(160,150);
+			scroll.setLocation(600,180);
+			scroll.setSize(300,130);
 			scroll.setVisible(true);
 			functionlabel.add(scroll);
 			
@@ -168,24 +186,24 @@ public class SinglePlayerPanel extends CommonPanel{
 			
 			basicinfo=new CommonTable(matchdetail,matchcolomn);
 			
-			basicinfo.setPreferredScrollableViewportSize(new Dimension(160,150));
+			basicinfo.setPreferredScrollableViewportSize(new Dimension(600,180));
 			basicinfo.setRowHeight(30);
 			basicinfo.setFont(new Font("微软雅黑",Font.BOLD,15));
 			//FitTableColumns(table);
 			
-			/*for(int i=0;i<allmatches.getColumnCount();i++){
-				TableColumn tc=allmatches.getColumn(allmatches.getColumnName(i));  
+			for(int i=0;i<basicinfo.getColumnCount();i++){
+				TableColumn tc=basicinfo.getColumn(basicinfo.getColumnName(i));  
 		        tc.setMinWidth(150);
 
-			}*/
+			}
 			basicinfo.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			basicinfo.getTableHeader().setPreferredSize(new Dimension (basicinfo.getTableHeader().getMinimumSize().width,30));
+			//basicinfo.getTableHeader().setPreferredSize(new Dimension (basicinfo.getTableHeader().getMinimumSize().width,30));
 			basicinfo.updateUI();
 
 			scroll = new JScrollPane();
 			scroll.setViewportView(basicinfo);
-			scroll.setLocation(700,180);
-			scroll.setSize(160,150);
+			scroll.setLocation(600,180);
+			scroll.setSize(300,130);
 			scroll.setVisible(true);
 			functionlabel.add(scroll);
 			break;
@@ -268,13 +286,14 @@ public class SinglePlayerPanel extends CommonPanel{
 
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
-			portraits.setIcon(new ImageIcon("E:/JavaWorkbench/NBAData/players/action"+playervo.name+".png"));
+			portraits.setIcon(new ImageIcon("E:/JavaWorkbench/NBAData/players/action/"+playervo.name+".png"));
 			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void mouseExited(MouseEvent arg0) {
+			portraits.setIcon(new ImageIcon("E:/JavaWorkbench/NBAData/players/portrait/"+playervo.name+".png"));
 			// TODO Auto-generated method stub
 			
 		}
@@ -287,6 +306,17 @@ public class SinglePlayerPanel extends CommonPanel{
 
 		@Override
 		public void mouseReleased(MouseEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	class backlistener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			Constant.mainframe.showPlayerMainPanel();
 			// TODO Auto-generated method stub
 			
 		}

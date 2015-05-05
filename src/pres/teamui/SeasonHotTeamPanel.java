@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -42,6 +43,11 @@ public class SeasonHotTeamPanel extends CommonPanel {
 		this.teamvolist=teamvolist;
 		firstfive=new ArrayList<teamVO>();
 		teamblservice=new TeamBL();
+		
+		teaminfo=new JLabel(new ImageIcon("graphics/detailpanel/teaminfo_label.png"));
+		teaminfo.setBounds(500, 20, 180, 45);
+		teaminfo.setVisible(true);
+		functionlabel.add(teaminfo);
 		
 		String[] screenby={"场均得分","场均篮板","场均助攻","场均盖帽","场均抢断","三分命中率","投篮命中率","罚球命中率"};
 		ScreenBy=new JComboBox(screenby);
@@ -123,7 +129,7 @@ public class SeasonHotTeamPanel extends CommonPanel {
 		}*/
 		result.addMouseListener(new tableadapter());
 		result.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		result.getTableHeader().setPreferredSize(new Dimension (result.getTableHeader().getMinimumSize().width,30));
+		//result.getTableHeader().setPreferredSize(new Dimension (result.getTableHeader().getMinimumSize().width,30));
 		result.updateUI();
 
 		scroll = new JScrollPane();

@@ -37,9 +37,11 @@ public class TeamMainPanel extends CommonPanel{
 	ArrayList<teamVO> teamlist;
 	JScrollPane scroll;
 	JComboBox sortby;
+	JComboBox seasons;
 	JComboBox AT;//average or total
 	JLabel teaminfo;
 	
+	String season="13-14";//默认13-14赛季
 	boolean isUP=true;
 	boolean isTotal=true;
 	
@@ -66,6 +68,15 @@ public class TeamMainPanel extends CommonPanel{
 		AT.addActionListener(new ATlistener());
 		AT.setVisible(true);
 		functionlabel.add(AT);
+		
+		seasons=new JComboBox(new String[]{"12-13","13-14","14-15"});
+		seasons.setBounds(140, 300, 120, 35);
+		seasons.setFont(font1);
+		seasons.setBorder(BorderFactory.createEmptyBorder());
+		seasons.setSelectedItem(null);
+		seasons.addActionListener(new seasonslistener());
+		seasons.setVisible(true);
+		functionlabel.add(seasons);
 		
 		/*sortby=new JComboBox(sorts);
 		sortby.setBounds(140, 150, 120, 35);
@@ -94,7 +105,7 @@ public class TeamMainPanel extends CommonPanel{
 		functionlabel.add(sort_down);*/
 		
 		teamblservice=new TeamBL();
-		teamlist=teamblservice.findAll();
+		teamlist=teamblservice.findAll(season);
 		
 		addTable(teamlist);
 		
@@ -307,6 +318,23 @@ public class TeamMainPanel extends CommonPanel{
 		}
 	}
 	
+	class seasonslistener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			season=seasons.getSelectedItem().toString();
+			
+			functionlabel.remove(table);
+			functionlabel.remove(scroll);
+			
+			teamlist=teamblservice.findAll(season);
+			addTable(teamlist);
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 	class ATlistener implements ActionListener{
 
 		@Override
@@ -414,7 +442,7 @@ public class TeamMainPanel extends CommonPanel{
 				}
 				
 				
-				addTable(teamblservice.sortBy(sort,isUP));
+				addTable(teamblservice.sortBy(sort,isUP,teamlist));
 				isUP=!isUP;
 				
 				Constant.mainframe.repaint();				
@@ -518,7 +546,7 @@ public class TeamMainPanel extends CommonPanel{
 
 			}
 			
-			addTable(teamblservice.sortBy(sort,true));
+			addTable(teamblservice.sortBy(sort,true,teamlist));
 			
 			Constant.mainframe.repaint();
 			// TODO Auto-generated method stub
@@ -535,7 +563,7 @@ public class TeamMainPanel extends CommonPanel{
 			functionlabel.remove(table);
 			SortBy sort=SortBy.TEAM_TOTALSCORES;//默认以总分排序
 			
-			addTable(teamblservice.sortBy(sort,false));
+			addTable(teamblservice.sortBy(sort,false,teamlist));
 			
 			Constant.mainframe.repaint();
 			// TODO Auto-generated method stub

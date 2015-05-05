@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import po.teamPO;
 
 public interface TeamDataService {
-	public void initialData();
-	public ArrayList<teamPO> findAll();
+	public void initialData(String season);
+	public ArrayList<teamPO> findAll(String season);
 
 }

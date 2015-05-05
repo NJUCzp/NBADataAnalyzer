@@ -18,14 +18,14 @@ public class PlayerBL implements PlayerBLService{
 	ArrayList<playerVO> playervolist=new ArrayList<playerVO>();
 
 	@Override
-	public ArrayList<playerVO> findAll() {
-		playervolist=playerblfind.findAll();
+	public ArrayList<playerVO> findAll(String season) {
+		playervolist=playerblfind.findAll(season);
 		// TODO Auto-generated method stub
 		
 		return playervolist;
 	}
 
-	@Override
+	/*@Override
 	public ArrayList<playerVO> sortBy(SortBy sortby,boolean isUP) {
 		playervolist=playerblfind.findAll();
 		PlayerBLSort sortplayer=new PlayerBLSort(playervolist,sortby,isUP);
@@ -33,7 +33,7 @@ public class PlayerBL implements PlayerBLService{
 		return playervolist;
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 	
 	@Override
 	public ArrayList<playerVO> sortBy(SortBy sortby,boolean isUP,ArrayList<playerVO> playervolist) {
@@ -45,8 +45,8 @@ public class PlayerBL implements PlayerBLService{
 	}
 
 	@Override
-	public ArrayList<playerVO> screen(ArrayList<ScreenBy> screenby,SortBy sortby) {
-		playervolist=playerblfind.findAll();
+	public ArrayList<playerVO> screen(ArrayList<ScreenBy> screenby,SortBy sortby,ArrayList<playerVO> playervolist) {
+		//playervolist=playerblfind.findAll(season);
 		ArrayList<playerVO> toscreenlist=playervolist;
 		
 		//初步筛选
@@ -201,9 +201,10 @@ public class PlayerBL implements PlayerBLService{
 	@Override
 	public ArrayList<playerInSingleMatchPO> sortByDaily(SortBy sortby,//默认从高到低
 			 ArrayList<playerInSingleMatchPO> dailyplayerlist) {
-		
+		PlayerBLSort sortplayer=new PlayerBLSort(dailyplayerlist,sortby);
+		sortplayer.dailysort(dailyplayerlist,0, dailyplayerlist.size()-1);
 		// TODO Auto-generated method stub
-		return null;
+		return dailyplayerlist;
 	}
 	
 	

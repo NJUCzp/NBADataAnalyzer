@@ -21,8 +21,8 @@ public class test_readfromfile {
 		/*System.out.println(teampolist.size());
 		System.out.println(teampolist.get(0).getTotalMatches());
 		System.out.println(teampolist.get(0).getOffensiveRound());*/
-		playerdataservice.initialData();
-		playerpolist=playerdataservice.finaAll();
+		//playerdataservice.initialData();
+		//playerpolist=playerdataservice.finaAll();
 		System.out.println(playerpolist.size());
 		System.out.println(playerpolist.get(0).getTeam());
 	}

@@ -37,10 +37,11 @@ public class PlayerMainPanel extends CommonPanel{
 	CommonButton seasonhot;
 	CommonButton dailyhot;
 	CommonTable table;
+	String season="13-14";//默认展示13-14赛季
 	Object[][] playerdata;
 	ArrayList<playerVO> playerlist;
 	JScrollPane scroll;
-	JComboBox sortby;
+	JComboBox seasons;
 	JComboBox AT;//average or total
 	JLabel playerinfo;
 	
@@ -80,6 +81,15 @@ public class PlayerMainPanel extends CommonPanel{
 		AT.setVisible(true);
 		functionlabel.add(AT);
 		
+		seasons=new JComboBox(new String[]{"12-13","13-14","14-15"});
+		seasons.setBounds(140, 300, 120, 35);
+		seasons.setFont(font1);
+		seasons.setBorder(BorderFactory.createEmptyBorder());
+		seasons.setSelectedItem(null);
+		seasons.addActionListener(new seasonslistener());
+		seasons.setVisible(true);
+		functionlabel.add(seasons);
+		
 		
 		/*upsort=new CommonButton("graphics/actionbutton/up.png","graphics/actionbutton/up_pressed.png","graphics/actionbutton/up_pressed.png");
 		upsort.setBounds(400, 150, 240, 60);
@@ -93,20 +103,20 @@ public class PlayerMainPanel extends CommonPanel{
 		downsort.setVisible(true);
 		functionlabel.add(downsort);*/
 		
-		mostprogressed=new CommonButton("graphics/actionbutton/screen.png","graphics/actionbutton/screen_dark_pressed.png","graphics/actionbutton/screen_dark_pressed.png");
-		mostprogressed.setBounds(40, 400, 240, 60);
+		mostprogressed=new CommonButton("graphics/actionbutton/most_progressed.png","graphics/actionbutton/most_progressed.png","graphics/actionbutton/most_progressed_pressed.png");
+		mostprogressed.setBounds(20, 400, 240, 60);
 		mostprogressed.addActionListener(new mostprogressedlistener());
 		mostprogressed.setVisible(true);
 		functionlabel.add(mostprogressed);
 		
-		seasonhot=new CommonButton("graphics/actionbutton/screen.png","graphics/actionbutton/screen_dark_pressed.png","graphics/actionbutton/screen_dark_pressed.png");
-		seasonhot.setBounds(40, 500, 240, 60);
+		seasonhot=new CommonButton("graphics/actionbutton/season_hot.png","graphics/actionbutton/season_hot.png","graphics/actionbutton/season_hot_pressed.png");
+		seasonhot.setBounds(20, 500, 240, 60);
 		seasonhot.addActionListener(new seasonhotlistener());
 		seasonhot.setVisible(true);
 		functionlabel.add(seasonhot);
 		
-		dailyhot=new CommonButton("graphics/actionbutton/screen.png","graphics/actionbutton/screen_dark_pressed.png","graphics/actionbutton/screen_dark_pressed.png");
-		dailyhot.setBounds(40, 600, 240, 60);
+		dailyhot=new CommonButton("graphics/actionbutton/daily_hot.png","graphics/actionbutton/daily_hot.png","graphics/actionbutton/daily_hot_pressed.png");
+		dailyhot.setBounds(20, 600, 240, 60);
 		dailyhot.addActionListener(new dailyhotlistener());
 		dailyhot.setVisible(true);
 		functionlabel.add(dailyhot);
@@ -124,7 +134,7 @@ public class PlayerMainPanel extends CommonPanel{
 		functionlabel.add(back);
 		
 		playerblservice=new PlayerBL();
-		playerlist=playerblservice.findAll();
+		playerlist=playerblservice.findAll(season);//默认展示13-14赛季
 		
 		addTable(playerlist);
 
@@ -298,6 +308,23 @@ public class PlayerMainPanel extends CommonPanel{
 		functionlabel.add(scroll);
 	}
 	
+	class seasonslistener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			season=seasons.getSelectedItem().toString();
+			
+			functionlabel.remove(table);
+			functionlabel.remove(scroll);
+			
+			playerlist=playerblservice.findAll(season);
+			addTable(playerlist);
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 	class seasonhotlistener implements ActionListener{
 
 		@Override
@@ -360,7 +387,7 @@ public class PlayerMainPanel extends CommonPanel{
 			functionlabel.remove(table);
 			SortBy sort=SortBy.PLAYER_TOTALSCORES;//默认以总分排序
 			
-			addTable(playerblservice.sortBy(sort,isUP));
+			addTable(playerblservice.sortBy(sort,isUP,playerlist));
 			
 			Constant.mainframe.repaint();
 			// TODO Auto-generated method stub

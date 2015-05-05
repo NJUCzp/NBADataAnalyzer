@@ -36,7 +36,7 @@ public class DataBaseServiceImpl<T> implements DataBaseService{
 	public static String encoding(String src){
 		String result = "";
 		for(int i=0;i<src.length();i++){
-			if(src.charAt(i)=='©¦'||src.charAt(i)=='-')
+			if(src.charAt(i)=='©¦'||src.charAt(i)=='-'||src.charAt(i)==' ')
 				result=result+(src.charAt(i));
 			else{
 				if((int)src.charAt(i)>=48&&(int)src.charAt(i)<=125)

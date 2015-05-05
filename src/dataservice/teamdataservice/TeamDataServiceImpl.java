@@ -14,7 +14,7 @@ import po.teamPO;
 public class TeamDataServiceImpl implements TeamDataService{
 	ArrayList<teamPO> teamAllInfo=new ArrayList<teamPO>();
 	
-	public void initialData(){
+	public void initialData(String season){
 		//读入球队基本信息
 		ArrayList<String> teamBasicInfo=new ArrayList<String>();
 		DataBaseServiceImpl dataBaseService=new DataBaseServiceImpl<String>("E:/JavaWorkbench/NBAData/teams/teams",teamBasicInfo);
@@ -35,7 +35,14 @@ public class TeamDataServiceImpl implements TeamDataService{
 				//dataBaseService.setFilepath("E:/JavaWorkbench/NBAData/matches");
 				File file=new File("E:/JavaWorkbench/NBAData/matches");
 				String[] filelist=file.list();
-				for(String files:filelist){					
+				ArrayList<String> seasonmatchlist=new ArrayList<String>();
+				
+				for(String files:filelist){
+					if(files.contains(season))
+						seasonmatchlist.add(files);
+				}
+				
+				for(String files:seasonmatchlist){					
 					ArrayList<String> singleMatchInfo=new ArrayList<String>();
 					teamInSingleMatchPO tempteam=new teamInSingleMatchPO();
 					DataBaseServiceImpl tempDataBaseService=new DataBaseServiceImpl<String>("E:/JavaWorkbench/NBAData/matches"+"/"+files,singleMatchInfo);
@@ -232,12 +239,24 @@ public class TeamDataServiceImpl implements TeamDataService{
 					teampo.setWinPercent((double)teampo.getWinMatches()/(double)teampo.getTotalMatches());
 				}
 		
-		DataBaseServiceImpl dataBaseServiceWrite=new DataBaseServiceImpl<teamPO>("tempdata/team.tpd",teamAllInfo);
+		DataBaseServiceImpl dataBaseServiceWrite=new DataBaseServiceImpl<teamPO>("tempdata/team"+season+".tpd",teamAllInfo);
 		dataBaseServiceWrite.write();
 
 	}
-	public ArrayList<teamPO> findAll(){
-		DataBaseServiceImpl dataBaseService=new DataBaseServiceImpl<teamPO>("tempdata/team.tpd",teamAllInfo);
+	public ArrayList<teamPO> findAll(String season){
+		File file=new File("tempdata");
+		String[] tempdata=file.list();
+		boolean exist=false;//判断当赛季数据是否已经存在
+		
+		for(String datafile:tempdata){
+			if(datafile.contains("team")&&datafile.contains(season))
+				exist=true;
+		}
+		
+		if(!exist)
+			initialData(season);
+		
+		DataBaseServiceImpl dataBaseService=new DataBaseServiceImpl<teamPO>("tempdata/team"+season+".tpd",teamAllInfo);
 		dataBaseService.readFromTemp();
 		
 		return teamAllInfo;

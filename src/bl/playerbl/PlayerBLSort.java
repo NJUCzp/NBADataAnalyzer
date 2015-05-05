@@ -98,6 +98,8 @@ public class PlayerBLSort {
 			
 		}
 		
+		default:{}
+		
 		}
 		
 		playerlist.set(i,x);
@@ -123,7 +125,7 @@ public class PlayerBLSort {
 						i++;
 				
 				if(i<j){
-					playerlist.set(j, playerlist.get(i));
+					dailyplayerlist.set(j, dailyplayerlist.get(i));
 				}
 					
 			}

@@ -9,9 +9,12 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 
 import constantinfo.Constant;
 import constantinfo.SortBy;
@@ -31,6 +34,7 @@ public class SeasonHotPlayerPanel extends CommonPanel{
 	CommonButton back;
 	CommonButton screen;
 	CommonTable result;
+	JLabel playerinfo;
 	
 	ArrayList<playerVO> playervolist;
 	ArrayList<playerVO> firstfive;
@@ -42,6 +46,11 @@ public class SeasonHotPlayerPanel extends CommonPanel{
 		this.playervolist=playervolist;
 		firstfive=new ArrayList<playerVO>();
 		playerblservice=new PlayerBL();
+		
+		playerinfo=new JLabel(new ImageIcon("graphics/detailpanel/playerinfo_label.png"));
+		playerinfo.setBounds(500, 20, 180, 45);
+		playerinfo.setVisible(true);
+		functionlabel.add(playerinfo);
 		
 		String[] screenby={"场均得分","场均篮板","场均助攻","场均盖帽","场均抢断","三分命中率","投篮命中率","罚球命中率"};
 		ScreenBy=new JComboBox(screenby);
@@ -116,14 +125,17 @@ public class SeasonHotPlayerPanel extends CommonPanel{
 		result.setFont(new Font("微软雅黑",Font.BOLD,15));
 		//FitTableColumns(table);
 		
-		/*for(int i=0;i<allmatches.getColumnCount();i++){
-			TableColumn tc=allmatches.getColumn(allmatches.getColumnName(i));  
-	        tc.setMinWidth(150);
+		for(int i=0;i<result.getColumnCount();i++){
+			TableColumn tc=result.getColumn(result.getColumnName(i));  
+	       if(i==0) 
+		        tc.setMinWidth(150);
+	        else
+	        	tc.setMinWidth(80);
 
-		}*/
+		}
 		result.addMouseListener(new tableadapter());
 		result.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		result.getTableHeader().setPreferredSize(new Dimension (result.getTableHeader().getMinimumSize().width,30));
+		//result.getTableHeader().setPreferredSize(new Dimension (result.getTableHeader().getMinimumSize().width,30));
 		result.updateUI();
 
 		scroll = new JScrollPane();
@@ -191,7 +203,7 @@ public class SeasonHotPlayerPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			Constant.mainframe.showTeamPanel();
+			Constant.mainframe.showPlayerMainPanel();
 			// TODO Auto-generated method stub
 			
 		}
