@@ -25,11 +25,13 @@ import pres.uitools.CommonTable;
 
 public class MatchMainPanel extends CommonPanel{
 	CommonButton back;
+	CommonButton upgrade;
 	//CommonButton help;
 	CommonTable allmatches;
 	JScrollPane scroll;
 	JLabel matchinfo;
 	JComboBox seasons;
+	String season="13-14";
 	
 	ArrayList<String> basicmatchinfo;
 	ArrayList<String> currentmatchinfo;//供显示在表格中的比赛信息
@@ -47,6 +49,12 @@ public class MatchMainPanel extends CommonPanel{
 		matchinfo.setVisible(true);
 		functionlabel.add(matchinfo);
 		
+		upgrade=new CommonButton("graphics/actionbutton/upgrade.png","graphics/actionbutton/upgrade.png","graphics/actionbutton/upgrade_pressed.png");
+		upgrade.setBounds(20, 300, 240, 60);
+		upgrade.addActionListener(new upgradelistener());
+		upgrade.setVisible(true);
+		functionlabel.add(upgrade);
+		
 		seasons=new JComboBox(new String[]{"12-13","13-14","14-15"});
 		seasons.setBounds(140, 150, 120, 35);
 		seasons.setFont(font1);
@@ -63,7 +71,7 @@ public class MatchMainPanel extends CommonPanel{
 		functionlabel.add(back);
 		
 		
-		addTable("13-14");//默认显示13-14赛季
+		addTable(season);//默认显示13-14赛季
 	}
 	
 	public void addTable(String season){
@@ -104,6 +112,21 @@ public class MatchMainPanel extends CommonPanel{
 		functionlabel.add(scroll);
 	}
 	
+	class upgradelistener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			functionlabel.remove(allmatches);
+			functionlabel.remove(scroll);
+			
+			addTable(season);
+			
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 	class seasonslistener implements ActionListener{
 
 		@Override
@@ -111,7 +134,9 @@ public class MatchMainPanel extends CommonPanel{
 			functionlabel.remove(allmatches);
 			functionlabel.remove(scroll);
 			
-			addTable(seasons.getSelectedItem().toString());
+			season=seasons.getSelectedItem().toString();
+			
+			addTable(season);
 			
 			Constant.mainframe.repaint();
 			// TODO Auto-generated method stub

@@ -25,6 +25,7 @@ public class TeamPanel extends CommonPanel{
 	CommonButton back;
 	CommonButton total;
 	CommonButton seasonhot;
+	CommonButton NOH;
 	JComboBox seasons;
 	ArrayList<JSVGCanvas> portraits;
 	//ArrayList<CommonButton> buttons;
@@ -101,9 +102,9 @@ public class TeamPanel extends CommonPanel{
 		
 		//¿¼ÂÇ»Æ·ä
 		if(beginyear<13){
-			CommonButton NOH=new CommonButton("E:/Javaworkbench/NBAData/teams/NOH.jpg","E:/Javaworkbench/NBAData/teams/NOH.jpg","E:/Javaworkbench/NBAData/teams/NOH.jpg");
+			NOH=new CommonButton("E:/Javaworkbench/NBAData/teams/NOH.png","E:/Javaworkbench/NBAData/teams/NOH.png","E:/Javaworkbench/NBAData/teams/NOH.png");
 			NOH.setSize(100, 100);
-			NOH.setLocation(862, 640);
+			NOH.setLocation(762, 540);
 			NOH.addActionListener(new NOHlistener());
 			NOH.setVisible(true);
 			functionlabel.add(NOH);
@@ -184,8 +185,12 @@ public class TeamPanel extends CommonPanel{
 		public void actionPerformed(ActionEvent arg0) {
 			season=seasons.getSelectedItem().toString();
 			
-			//for(JSVGCanvas portrait:portraits)
-				//functionlabel.remove(portrait);
+			for(JSVGCanvas portrait:portraits)
+				functionlabel.remove(portrait);
+			
+			if(NOH!=null)
+				functionlabel.remove(NOH);
+			
 			portraits.clear();
 			addPortraits(season);
 			

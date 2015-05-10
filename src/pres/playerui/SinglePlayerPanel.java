@@ -42,7 +42,7 @@ public class SinglePlayerPanel extends CommonPanel{
 		Font font1=new Font("Î¢ÈíÑÅºÚ",Font.BOLD,12);
 		this.playervo=playervo;
 		
-		System.out.print(playervo.recentFive.get(4).getDetailTimeOnCourt());
+		//System.out.print(playervo.recentFive.get(4).getDetailTimeOnCourt());
 
 		
 		playerinfo=new JLabel(new ImageIcon("graphics/detailpanel/playerinfo_label.png"));

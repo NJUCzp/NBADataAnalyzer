@@ -10,7 +10,8 @@ import vo.playerVO;
 
 public interface PlayerBLService {
 	public ArrayList<playerVO> findAll(String season);
-	public ArrayList<playerInSingleMatchPO> findByDate(String date);
+	public void deleteTemp(String season);
+	public ArrayList<playerInSingleMatchPO> findByDate(String season,String date);
 	//public ArrayList<playerVO> sortBy(SortBy sortby,boolean isUP);
 	public ArrayList<playerVO> sortBy(SortBy sortby,boolean isUP,ArrayList<playerVO> playervolist);
 	public ArrayList<playerInSingleMatchPO> sortByDaily(SortBy sortby,ArrayList<playerInSingleMatchPO> dailyplayerlist);

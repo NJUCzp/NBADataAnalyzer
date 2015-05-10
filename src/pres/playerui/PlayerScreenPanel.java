@@ -46,6 +46,7 @@ public class PlayerScreenPanel extends CommonPanel{
 	JLabel league;
 	JLabel sortby;
 	JLabel range;
+	JLabel chooseseason;
 	
 	JComboBox seasons;
 	JComboBox positions;
@@ -53,7 +54,7 @@ public class PlayerScreenPanel extends CommonPanel{
 	JComboBox Leagues;
 	JComboBox sortbys;
 	
-	String season;
+	String season="13-14";
 	PlayerBLService playerblservice;
 	ArrayList<playerVO> screenedlist; 
 	Object[][] screeneddata;
@@ -122,31 +123,37 @@ public class PlayerScreenPanel extends CommonPanel{
 		range.setFont(font2);
 		range.setBounds(350, 470, 100, 20);
 		range.setVisible(true);
-		functionlabel.add(range);
+		//functionlabel.add(range);
 		
 		min=new JLabel("最小值");
 		min.setFont(font2);
 		min.setBounds(470, 470, 100,20);
 		min.setVisible(true);
-		functionlabel.add(min);
+		//functionlabel.add(min);
 		
 		max=new JLabel("最大值");
 		max.setFont(font2);
 		max.setBounds(670, 470, 100, 20);
 		max.setVisible(true);
-		functionlabel.add(max);
+		//functionlabel.add(max);
 		
 		minimum=new JTextField(10);
 		minimum.setBounds(550,470,100,20);
 		minimum.setBorder(BorderFactory.createEmptyBorder());
 		minimum.setVisible(true);
-		functionlabel.add(minimum);
+		//functionlabel.add(minimum);
 		
 		maximum=new JTextField(10);
 		maximum.setBounds(750,470,100,20);
 		maximum.setBorder(BorderFactory.createEmptyBorder());
 		maximum.setVisible(true);
-		functionlabel.add(maximum);
+		//functionlabel.add(maximum);
+		
+		chooseseason=new JLabel("选择赛季");
+		chooseseason.setFont(font2);
+		chooseseason.setBounds(45, 220, 100, 30);
+		chooseseason.setVisible(true);
+		functionlabel.add(chooseseason);
 		
 		String[] allpositions={"前锋","中锋","后卫"};
 		String[] eorw={"东部","西部"};
@@ -186,7 +193,7 @@ public class PlayerScreenPanel extends CommonPanel{
 		functionlabel.add(sortbys);
 		
 		seasons=new JComboBox(new String[]{"12-13","13-14","14-15"});
-		seasons.setBounds(140, 300, 120, 35);
+		seasons.setBounds(140, 220, 120, 35);
 		seasons.setFont(font1);
 		seasons.setBorder(BorderFactory.createEmptyBorder());
 		seasons.setSelectedItem(null);
@@ -313,7 +320,9 @@ public class PlayerScreenPanel extends CommonPanel{
 			int toscreeneorw=EW.getSelectedIndex();
 			int toscreenleagues=Leagues.getSelectedIndex();
 			int toscreensortbys=sortbys.getSelectedIndex();
-			String season=seasons.getSelectedItem().toString();
+			if(seasons.getSelectedItem()!=null){
+				season=seasons.getSelectedItem().toString();
+			}
 			
 			ArrayList<ScreenBy> toscreen=new ArrayList<ScreenBy>();
 			SortBy sort=SortBy.SCREEN_SCORE;//默认按总得分筛选
@@ -403,7 +412,8 @@ public class PlayerScreenPanel extends CommonPanel{
 			functionlabel.remove(sortby);
 			functionlabel.remove(sortbys);
 			
-			
+			if(season==null)
+				season="13-14";//默认13-14赛季
 			screenedlist=playerblservice.screen(toscreen,sort,playerblservice.findAll(season));//返回一组已筛选的且大小符合要求的球员信息
 						
 			//String[] colomn = {"球员姓名","位置","联盟","得分","篮板","助攻","得分/篮板/助攻","盖帽","抢断","犯规","失误","分钟","效率","投篮","三分","罚球","两双"};

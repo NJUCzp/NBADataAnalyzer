@@ -20,6 +20,7 @@ import constantinfo.SortBy;
 import bl.playerbl.PlayerBL;
 import bl.teambl.TeamBL;
 import blservice.playerblservice.PlayerBLService;
+import po.playerInSingleMatchPO;
 import pres.playerui.SeasonHotPlayerPanel.tableadapter;
 import pres.uitools.CommonButton;
 import pres.uitools.CommonPanel;
@@ -34,7 +35,8 @@ public class MostProgressedPanel extends CommonPanel{
 	CommonButton back;
 	CommonButton screen;
 	CommonTable result;
-	
+	JLabel options;
+
 	ArrayList<playerVO> firstfive;
 	ArrayList<playerVO> playervolist;
 	PlayerBLService playerblservice;
@@ -46,10 +48,18 @@ public class MostProgressedPanel extends CommonPanel{
 		firstfive=new ArrayList<playerVO>();
 		playerblservice=new PlayerBL();
 		
+		Font font2=new Font("微软雅黑",Font.BOLD,15);
+		
 		playerinfo=new JLabel(new ImageIcon("graphics/detailpanel/playerinfo_label.png"));
 		playerinfo.setBounds(500, 20, 180, 45);
 		playerinfo.setVisible(true);
 		functionlabel.add(playerinfo);
+		
+		options=new JLabel("筛选条件:");
+		options.setFont(font2);
+		options.setBounds(330, 150, 100, 30);
+		options.setVisible(true);
+		functionlabel.add(options);
 		
 		String[] screenby={"场均得分","场均篮板","场均助攻"};
 		ScreenBy=new JComboBox(screenby);
@@ -84,17 +94,22 @@ public class MostProgressedPanel extends CommonPanel{
 		case 0:{
 			sortby=SortBy.PROGRESS_AVERAGE_SCORE;
 			for(playerVO playervo:playervolist){
-				if(playervo.recentFive.size()<6)
+				
+				if(playervo.totalMatches<6){
+					playervo.progress=0.0;
 					continue;
+				}
 				else{
 					//计算五场之前的数据
 					int totalscorebefore=playervo.totalScores;	
-					for(int i=0;i<5;i++){
-						totalscorebefore=totalscorebefore-playervo.recentFive.get(i).getScore();
+					for(playerInSingleMatchPO single:playervo.recentFive){
+						totalscorebefore=totalscorebefore-single.getScore();
 					}
-					
-					if(totalscorebefore<=0)
+										
+					if(totalscorebefore<=0){
+						playervo.progress=0.0;
 						continue;
+					}
 					else{
 						double A=(double)totalscorebefore/(double)playervo.totalMatches-5;
 						double B=(double)(playervo.totalScores-totalscorebefore)/5.0;
@@ -148,6 +163,10 @@ public class MostProgressedPanel extends CommonPanel{
 		}
 			break;}
 		default:{}
+		}
+		
+		for(playerVO p:playervolist){
+			System.out.println(p.progress);
 		}
 		
 		playervolist=playerblservice.sortBy(sortby, false,playervolist);

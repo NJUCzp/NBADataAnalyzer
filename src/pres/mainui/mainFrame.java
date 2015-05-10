@@ -135,8 +135,8 @@ public class mainFrame extends JFrame {
 		card.show(this.getContentPane(), "seasonhotplayerpanel");
 	}
 	
-	public void showDailyHotPlayerPanel(String date){
-		dailyhotplayerpanel =new DailyHotPlayerPanel(date);
+	public void showDailyHotPlayerPanel(String season,String date){
+		dailyhotplayerpanel =new DailyHotPlayerPanel(season,date);
 		setDragable(dailyhotplayerpanel);
 		this.getContentPane().add(dailyhotplayerpanel, "dailyhotplayerpanel");
 		card.show(this.getContentPane(), "dailyhotplayerpanel");

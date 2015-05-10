@@ -16,6 +16,10 @@ public class TeamBL implements TeamBLService{
 		// TODO Auto-generated method stub
 		return teamvolist;
 	}
+	
+	public void deleteTemp(String season){
+		teamblfind.deleteTemp(season);
+	}
 
 	/*@Override
 	public ArrayList<teamVO> sortBy(SortBy sortby,boolean isUP) {

@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -35,6 +36,7 @@ public class SingleTeamPanel extends CommonPanel{
 	CommonButton back;
 	JScrollPane scroll;
 	JSVGCanvas canvas;
+	JLabel NOH;
 	
 	JLabel fullname;
 	JLabel league;
@@ -54,28 +56,34 @@ public class SingleTeamPanel extends CommonPanel{
 		
 		fullname=new JLabel("球队全称:"+teamvo.fullname);
 		fullname.setFont(font2);
-		fullname.setBounds(512, 120,500,30);
+		fullname.setBounds(542, 120,500,30);
 		fullname.setVisible(true);
 		functionlabel.add(fullname);
 		
 		league=new JLabel("所在联盟:"+teamvo.league);
 		league.setFont(font2);
-		league.setBounds(512, 160,500,30);
+		league.setBounds(542, 160,500,30);
 		league.setVisible(true);
 		functionlabel.add(league);
 		
 		city=new JLabel("所在城市:"+teamvo.city);
 		city.setFont(font2);
-		city.setBounds(512, 200,500,30);
+		city.setBounds(542, 200,500,30);
 		city.setVisible(true);
 		functionlabel.add(city);
 		
-		canvas=new JSVGCanvas();
-		canvas.setURI("file:/E:/JavaWorkbench/NBAData/teams/"+teamvo.shortname+".svg");
-		canvas.setBounds(100, 100, 200, 200);
-		canvas.setVisible(true);
-		functionlabel.add(canvas);
-		
+		if(teamvo.shortname.equals("NOH")){
+			NOH=new JLabel(new ImageIcon("E:/JavaWorkbench/NBAData/teams/NOH.png"));
+			NOH.setBounds(270, 100, 200, 200);
+			NOH.setVisible(true);
+			functionlabel.add(NOH);
+		}else{
+			canvas=new JSVGCanvas();
+			canvas.setURI("file:/E:/JavaWorkbench/NBAData/teams/"+teamvo.shortname+".svg");
+			canvas.setBounds(270, 100, 200, 200);
+			canvas.setVisible(true);
+			functionlabel.add(canvas);
+		}
 		
 		
 		Object[][] recentdetail=new Object[5][12];

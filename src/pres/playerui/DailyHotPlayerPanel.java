@@ -36,6 +36,7 @@ public class DailyHotPlayerPanel extends CommonPanel{
 	CommonButton screen;
 	CommonTable result;
 	JLabel playerinfo;
+	JLabel options;
 	
 	String season="13-14";//先设成13-14赛季
 	String date="01-02";//先设成1月2日
@@ -44,10 +45,13 @@ public class DailyHotPlayerPanel extends CommonPanel{
 	//ArrayList<playerVO> firstfive;
 	PlayerBLService playerblservice;
 
-	public DailyHotPlayerPanel(String date) {
+	public DailyHotPlayerPanel(String season,String date) {
 		super("graphics/detailpanel/detail_background.png");
 		Font font1=new Font("微软雅黑",Font.BOLD,12);
-		//this.date=date;
+		Font font2=new Font("微软雅黑",Font.BOLD,15);
+
+		this.date=date;
+		this.season=season;
 		//this.playervolist=playervolist;
 		//firstfive=new ArrayList<playerVO>();
 		playerblservice=new PlayerBL();
@@ -60,6 +64,12 @@ public class DailyHotPlayerPanel extends CommonPanel{
 		playerinfo.setBounds(500, 20, 180, 45);
 		playerinfo.setVisible(true);
 		functionlabel.add(playerinfo);
+		
+		options=new JLabel("筛选条件:");
+		options.setFont(font2);
+		options.setBounds(330, 150, 100, 30);
+		options.setVisible(true);
+		functionlabel.add(options);
 		
 		/*for(String singlematch:matchinfo){
 			String date=singlematch.split(";")[1];
@@ -127,7 +137,7 @@ public class DailyHotPlayerPanel extends CommonPanel{
 		}
 		default:{}
 		}
-		ArrayList<playerInSingleMatchPO> dailyPlayer=playerblservice.findByDate(date);
+		ArrayList<playerInSingleMatchPO> dailyPlayer=playerblservice.findByDate(season,date);
 		dailyPlayer=playerblservice.sortByDaily(sortby, dailyPlayer);		
 		//排序
 		Object[] dailycolomn=new String[]{"球员姓名","赛季","比赛日期","比赛双方","上场时间","得分","助攻","篮板","盖帽","抢断","投篮命中率","三分命中率","罚球命中率"};
@@ -148,9 +158,9 @@ public class DailyHotPlayerPanel extends CommonPanel{
 			dailydetail[length][7]=singleplayer.getRebounds();
 			dailydetail[length][8]=singleplayer.getRejections();
 			dailydetail[length][9]=singleplayer.getSteals();
-			dailydetail[length][10]=singleplayer.getShotPercent();
-			dailydetail[length][11]=singleplayer.getThreePointPercent();
-			dailydetail[length][12]=singleplayer.getFreeThrowPercent();
+			dailydetail[length][10]=String.format("%.2f",singleplayer.getShotPercent());
+			dailydetail[length][11]=String.format("%.2f",singleplayer.getThreePointPercent());
+			dailydetail[length][12]=String.format("%.2f",singleplayer.getFreeThrowPercent());
 
 			length++;
 		}

@@ -32,6 +32,7 @@ public class SeasonHotTeamPanel extends CommonPanel {
 	CommonButton back;
 	CommonButton screen;
 	CommonTable result;
+	JLabel options;
 	
 	ArrayList<teamVO> firstfive;
 	ArrayList<teamVO> teamvolist;
@@ -44,10 +45,18 @@ public class SeasonHotTeamPanel extends CommonPanel {
 		firstfive=new ArrayList<teamVO>();
 		teamblservice=new TeamBL();
 		
+		Font font2=new Font("微软雅黑",Font.BOLD,15);
+		
 		teaminfo=new JLabel(new ImageIcon("graphics/detailpanel/teaminfo_label.png"));
 		teaminfo.setBounds(500, 20, 180, 45);
 		teaminfo.setVisible(true);
 		functionlabel.add(teaminfo);
+		
+		options=new JLabel("筛选条件:");
+		options.setFont(font2);
+		options.setBounds(330, 150, 100, 30);
+		options.setVisible(true);
+		functionlabel.add(options);
 		
 		String[] screenby={"场均得分","场均篮板","场均助攻","场均盖帽","场均抢断","三分命中率","投篮命中率","罚球命中率"};
 		ScreenBy=new JComboBox(screenby);
@@ -58,8 +67,9 @@ public class SeasonHotTeamPanel extends CommonPanel {
 		ScreenBy.setVisible(true);
 		functionlabel.add(ScreenBy);
 		
-		addTable(0);//默认以场均得分排序
 		
+		addTable(0);//默认以场均得分排序
+				
 		screen=new CommonButton("graphics/actionbutton/screen.png","graphics/actionbutton/screen_dark_pressed.png","graphics/actionbutton/screen_dark_pressed.png");
 		screen.setBounds(600, 150, 240, 60);
 		screen.addActionListener(new screenlistener());
@@ -88,6 +98,8 @@ public class SeasonHotTeamPanel extends CommonPanel {
 		default:{}
 		}
 		
+		System.out.println("tosort");
+		System.out.println(teamvolist.size());
 		teamvolist=teamblservice.sortBy(sortby, false,teamvolist);
 		
 		if(firstfive.size()==0){
@@ -117,7 +129,7 @@ public class SeasonHotTeamPanel extends CommonPanel {
 			length++;
 		}
 		result=new CommonTable(resultdetail,resultcolomn);
-		result.setPreferredScrollableViewportSize(new Dimension(550,200));
+		result.setPreferredScrollableViewportSize(new Dimension(550,180));
 		result.setRowHeight(30);
 		result.setFont(new Font("微软雅黑",Font.BOLD,15));
 		//FitTableColumns(table);
@@ -135,7 +147,7 @@ public class SeasonHotTeamPanel extends CommonPanel {
 		scroll = new JScrollPane();
 		scroll.setViewportView(result);
 		scroll.setLocation(312,350);
-		scroll.setSize(550, 200);
+		scroll.setSize(550,180);
 		scroll.setVisible(true);
 		functionlabel.add(scroll);
 		
@@ -148,7 +160,7 @@ public class SeasonHotTeamPanel extends CommonPanel {
 		public void mouseClicked(MouseEvent e) {
 			if(e.getClickCount()==2){
 				int index=result.getSelectedRow();
-				System.out.println(firstfive.get(index).city);
+				//System.out.println(firstfive.get(index).city);
 				Constant.mainframe.showSingleTeamPanel(firstfive.get(index));
 			}
 			// TODO Auto-generated method stub

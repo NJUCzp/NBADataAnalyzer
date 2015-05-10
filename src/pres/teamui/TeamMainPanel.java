@@ -33,6 +33,7 @@ public class TeamMainPanel extends CommonPanel{
 	CommonButton sort_up;
 	CommonButton sort_down;
 	CommonTable table;
+	CommonButton upgrade;
 	Object[][] teamdata;
 	ArrayList<teamVO> teamlist;
 	JScrollPane scroll;
@@ -40,6 +41,8 @@ public class TeamMainPanel extends CommonPanel{
 	JComboBox seasons;
 	JComboBox AT;//average or total
 	JLabel teaminfo;
+	JLabel AorT;
+	JLabel chooseseason;
 	
 	String season="13-14";//默认13-14赛季
 	boolean isUP=true;
@@ -53,12 +56,24 @@ public class TeamMainPanel extends CommonPanel{
 		
 		String[] sorts={"比赛场数","投篮命中数","投篮出手次数","三分命中数","三分出手数","罚球命中数","罚球出手数","进攻篮板数","防守篮板数","篮板数","助攻数","抢断数","盖帽数","失误数","犯规数","比赛得分","投篮命中率","三分命中率","罚球命中率","胜率","进攻回合","进攻效率","防守效率","进攻篮板效率","防守篮板效率","抢断效率","助攻率"};
 		Font font1=new Font("微软雅黑",Font.BOLD,12);
-		
+		Font font2=new Font("微软雅黑",Font.BOLD,15);
 		
 		teaminfo=new JLabel(new ImageIcon("graphics/detailpanel/teaminfo_label.png"));
 		teaminfo.setBounds(500, 20, 180, 45);
 		teaminfo.setVisible(true);
 		functionlabel.add(teaminfo);
+		
+		AorT=new JLabel("总和/平均");
+		AorT.setFont(font2);
+		AorT.setBounds(40, 150, 100, 30);
+		AorT.setVisible(true);
+		functionlabel.add(AorT);
+		
+		chooseseason=new JLabel("选择赛季");
+		chooseseason.setFont(font2);
+		chooseseason.setBounds(45, 220, 100, 30);
+		chooseseason.setVisible(true);
+		functionlabel.add(chooseseason);
 		
 		AT=new JComboBox(new String[]{"总和","平均"});
 		AT.setBounds(140, 150, 120, 35);
@@ -70,7 +85,7 @@ public class TeamMainPanel extends CommonPanel{
 		functionlabel.add(AT);
 		
 		seasons=new JComboBox(new String[]{"12-13","13-14","14-15"});
-		seasons.setBounds(140, 300, 120, 35);
+		seasons.setBounds(140, 220, 120, 35);
 		seasons.setFont(font1);
 		seasons.setBorder(BorderFactory.createEmptyBorder());
 		seasons.setSelectedItem(null);
@@ -85,6 +100,12 @@ public class TeamMainPanel extends CommonPanel{
 		sortby.setSelectedItem(null);
 		sortby.setVisible(true);
 		functionlabel.add(sortby);*/
+		
+		upgrade=new CommonButton("graphics/actionbutton/upgrade.png","graphics/actionbutton/upgrade.png","graphics/actionbutton/upgrade_pressed.png");
+		upgrade.setBounds(20, 300, 240, 60);
+		upgrade.addActionListener(new upgradelistener());
+		upgrade.setVisible(true);
+		functionlabel.add(upgrade);
 		
 		back=new CommonButton("graphics/actionbutton/back_pressed.png","graphics/actionbutton/back_pressed.png","graphics/actionbutton/back.png");
 		back.setBounds(400+320, 600, 240, 60);
@@ -318,6 +339,23 @@ public class TeamMainPanel extends CommonPanel{
 		}
 	}
 	
+	class upgradelistener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			functionlabel.remove(table);
+			functionlabel.remove(scroll);
+			
+			teamblservice.deleteTemp(season);
+			teamlist=teamblservice.findAll(season);
+			addTable(teamlist);
+			
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
 	class seasonslistener implements ActionListener{
 
 		@Override
@@ -327,7 +365,9 @@ public class TeamMainPanel extends CommonPanel{
 			functionlabel.remove(table);
 			functionlabel.remove(scroll);
 			
+			teamlist.clear();
 			teamlist=teamblservice.findAll(season);
+			
 			addTable(teamlist);
 			// TODO Auto-generated method stub
 			

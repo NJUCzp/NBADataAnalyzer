@@ -55,5 +55,9 @@ public class TeamBLFind {
 		}
 		return teamvolist;		
 	}
+	
+	public void deleteTemp(String season){
+		teamdataservice.deleteTemp(season);
+	}
 
 }

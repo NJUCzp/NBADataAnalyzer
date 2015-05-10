@@ -24,6 +24,10 @@ public class PlayerBL implements PlayerBLService{
 		
 		return playervolist;
 	}
+	
+	public void deleteTemp(String season){
+		playerblfind.deleteTemp(season);
+	}
 
 	/*@Override
 	public ArrayList<playerVO> sortBy(SortBy sortby,boolean isUP) {
@@ -193,9 +197,9 @@ public class PlayerBL implements PlayerBLService{
 	}
 
 	@Override
-	public ArrayList<playerInSingleMatchPO> findByDate(String date) {
+	public ArrayList<playerInSingleMatchPO> findByDate(String season,String date) {
 		// TODO Auto-generated method stub
-		return playerblfind.findByDate(date);
+		return playerblfind.findByDate(season,date);
 	}
 
 	@Override

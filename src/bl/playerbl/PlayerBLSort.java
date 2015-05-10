@@ -94,8 +94,61 @@ public class PlayerBLSort {
 			break;
 		}
 		
+		case PLAYER_AVERAGESCORES:{
+						
+			while(i<j){
+				if (isUP)
+					while(i<j && ((double)playerlist.get(j).totalScores/(double)playerlist.get(j).totalMatches)>=((double)x.totalScores/(double)x.totalMatches))
+						j--;
+				else
+					while(i<j && ((double)playerlist.get(j).totalScores/(double)playerlist.get(j).totalMatches)<=((double)x.totalScores/(double)x.totalMatches))
+						j--;
+				
+				if(i<j){
+					playerlist.set(i, playerlist.get(j));
+				}
+					
+				if (isUP)
+					while(i<j&& (double)playerlist.get(i).totalScores/(double)playerlist.get(j).totalMatches<=(double)x.totalScores/(double)x.totalMatches)
+						i++;
+				else
+					while(i<j&& (double)playerlist.get(i).totalScores/(double)playerlist.get(j).totalMatches>=(double)x.totalScores/(double)x.totalMatches)
+						i++;
+				
+				if(i<j){
+					playerlist.set(j, playerlist.get(i));
+				}
+					
+			}
+			break;
+		}
+		
 		case PROGRESS_AVERAGE_SCORE:{
-			
+			while(i<j){
+				if (isUP)
+					while(i<j && playerlist.get(j).progress>=x.progress)
+						j--;
+				else
+					while(i<j && playerlist.get(j).progress<=x.progress)
+						j--;
+				
+				if(i<j){
+					playerlist.set(i, playerlist.get(j));
+				}
+					
+				if (isUP)
+					while(i<j&& playerlist.get(i).progress<=x.progress)
+						i++;
+				else
+					while(i<j&& playerlist.get(i).progress>=x.progress)
+						i++;
+				
+				if(i<j){
+					playerlist.set(j, playerlist.get(i));
+				}
+					
+			}
+			break;
 		}
 		
 		default:{}

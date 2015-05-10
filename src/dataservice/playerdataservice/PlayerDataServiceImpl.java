@@ -17,6 +17,7 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 		//读入球员基本信息
 		File basicfile=new File("E:/JavaWorkbench/NBAData/players/info");
 		String[] basicplayerlist=basicfile.list();
+		playerAllInfo.clear();
 		
 		for(String basicpath:basicplayerlist){
 			ArrayList<String> playerBasicInfo=new ArrayList<String>();
@@ -25,19 +26,43 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 			playerPO tempPO=new playerPO(playerBasicInfo.get(0).split("│")[1]);
 			tempPO.setPosition(playerBasicInfo.get(2).split("│")[1]);
 			playerAllInfo.add(tempPO);
+			
 		}
 		
 		//读入球员比赛信息
 		File matchfile=new File("E:/JavaWorkbench/NBAData/matches");
 		String[] matchlist=matchfile.list();
 		ArrayList<String> seasonmatchlist=new ArrayList<String>();
-		
+		ArrayList<String> realseasonmatch=new ArrayList<String>();
+
 		for(String singlematch:matchlist){
-			if(singlematch.contains(season))
+			if(singlematch.split("_")[0].contains(season))
 				seasonmatchlist.add(singlematch);
 		}
 		
-		for(String singlematch:seasonmatchlist){
+		//对比赛信息进行重新排序
+		int startposition=0;
+		
+		for(int i=0;i<seasonmatchlist.size()-1;i++){
+			int month1=Integer.parseInt(seasonmatchlist.get(i).split("_")[1].split("-")[0]);
+			int month2=Integer.parseInt(seasonmatchlist.get(i+1).split("_")[1].split("-")[0]);
+			if((month2-month1)>2){
+				startposition=i+1;
+				break;
+			}
+		}
+		
+		System.out.println(startposition);
+		
+		for(int i=startposition;i<seasonmatchlist.size();i++){
+			realseasonmatch.add(seasonmatchlist.get(i));
+		}
+		
+		for(int i=0;i<startposition;i++){
+			realseasonmatch.add(seasonmatchlist.get(i));
+		}
+		
+		for(String singlematch:realseasonmatch){
 						
 			ArrayList<String> playerMatchInfo=new ArrayList<String>();
 			DataBaseServiceImpl playermatchdataservice=new DataBaseServiceImpl<String>("E:/JavaWorkbench/NBAData/matches"+"/"+singlematch,playerMatchInfo);
@@ -273,13 +298,13 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 						}
 						
 						if(singleplayer.getName().equals("Aaron Brooks")){
-							System.out.println(singleplayer.getName());
-							System.out.println(singlematch);
-							System.out.println(ishome);
-							System.out.println(singledetailtime);
-							for(playerInSingleMatchPO s:singleplayer.getRecentFive()){
-								System.out.println(s.getDetailTimeOnCourt());
-							}
+							//System.out.println(singleplayer.getName());
+							//System.out.println(singlematch);
+							//System.out.println(ishome);
+							//System.out.println(singledetailtime);
+							//for(playerInSingleMatchPO s:singleplayer.getRecentFive()){
+								//System.out.println(s.getDetailTimeOnCourt());
+							//}
 						}
 						
 						
@@ -319,7 +344,7 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 		//计算命中率等信息
 		for(playerPO playerlist:playerAllInfo){
 			
-			System.out.println(playerlist.getTotalShots());
+			//System.out.println(playerlist.getTotalShots());
 			
 			if(playerlist.getTotalShots()==0){
 				playerlist.setShotPercent(0.0);
@@ -335,7 +360,7 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 			}
 			playerlist.setShotPercent((double)playerlist.getShotsOnTargets()/(double)playerlist.getTotalShots());
 			playerlist.setThreePointPercent((double)playerlist.getThreePointShotsOnTargets()/(double)playerlist.getTotalThreePointShots());
-			playerlist.setFreeThrowPercent((double)playerlist.getTotalFreeThrows()/(double)playerlist.getFreeThrowOnTargets());
+			playerlist.setFreeThrowPercent((double)playerlist.getFreeThrowOnTargets()/(double)playerlist.getTotalFreeThrows());
 		}
 		
 		DataBaseServiceImpl dataBaseServiceWrite=new DataBaseServiceImpl<playerPO>("tempdata/player"+season+".tpd",playerAllInfo);
@@ -366,13 +391,27 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 		return playerAllInfo;
 	}
 	
-	public ArrayList<playerInSingleMatchPO> findByDate(String date){
+	public void deleteTemp(String season){
+		File file=new File("tempdata");
+		String[] tempdata=file.list();
+		//boolean exist=false;//判断当赛季数据是否已经存在
+		
+		for(String datafile:tempdata){
+			if(datafile.contains("player")&&datafile.contains(season)){
+				File tempfile=new File("tempdata/"+datafile);
+				tempfile.delete();
+				break;
+			}
+		}
+	}
+	
+	public ArrayList<playerInSingleMatchPO> findByDate(String season,String date){
 		ArrayList<playerInSingleMatchPO> dailyplayer=new ArrayList<playerInSingleMatchPO>();
 		File file=new File("E:/JavaWorkbench/NBAData/matches");
 		ArrayList<String> filetoopen=new ArrayList<String>();
 		
 		for(String singlefile:file.list()){
-			if(singlefile.contains(date))
+			if(singlefile.split("_")[1].equals(date)&&singlefile.split("_")[0].equals(season))
 				filetoopen.add(singlefile);
 		}
 		
@@ -404,9 +443,22 @@ public class PlayerDataServiceImpl implements PlayerDataService{
 					tempplayer.setTotalThreePointShots(Integer.parseInt(playerinfo[6]));
 					tempplayer.setFreeThrowOnTargets(Integer.parseInt(playerinfo[7]));
 					tempplayer.setTotalFreeThrows(Integer.parseInt(playerinfo[8]));
-					tempplayer.setShotPercent((double)Integer.parseInt(playerinfo[3])/(double)Integer.parseInt(playerinfo[4]));
-					tempplayer.setThreePointPercent((double)Integer.parseInt(playerinfo[5])/(double)Integer.parseInt(playerinfo[6]));
-					tempplayer.setFreeThrowPercent((double)Integer.parseInt(playerinfo[7])/(double)Integer.parseInt(playerinfo[8]));
+					
+					if(tempplayer.getTotalShots()==0)
+						tempplayer.setShotPercent(0.0);
+					else
+						tempplayer.setShotPercent((double)Integer.parseInt(playerinfo[3])/(double)Integer.parseInt(playerinfo[4]));
+
+					if(tempplayer.getTotalThreePointShots()==0)
+						tempplayer.setThreePointPercent(0.0);
+					else
+						tempplayer.setThreePointPercent((double)Integer.parseInt(playerinfo[5])/(double)Integer.parseInt(playerinfo[6]));
+
+					if(tempplayer.getTotalFreeThrows()==0)
+						tempplayer.setFreeThrowPercent(0.0);
+					else
+						tempplayer.setFreeThrowPercent((double)Integer.parseInt(playerinfo[7])/(double)Integer.parseInt(playerinfo[8]));
+
 					
 					dailyplayer.add(tempplayer);
 				}

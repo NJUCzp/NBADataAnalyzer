@@ -17,6 +17,7 @@ public class TeamDataServiceImpl implements TeamDataService{
 	public void initialData(String season){
 		//读入球队基本信息
 		ArrayList<String> teamBasicInfo=new ArrayList<String>();
+		teamAllInfo.clear();
 		DataBaseServiceImpl dataBaseService=new DataBaseServiceImpl<String>("E:/JavaWorkbench/NBAData/teams/teams",teamBasicInfo);
 		dataBaseService.readFromfile();
 	    
@@ -30,21 +31,55 @@ public class TeamDataServiceImpl implements TeamDataService{
 					tempPO.setLeague(basicdetailinfo[4]);
 					teamAllInfo.add(tempPO);
 				}
+				//考虑12-13赛季无鹈鹕
+				if(Integer.parseInt(season.split("-")[0])<13){
+					for(teamPO t:teamAllInfo){
+						if(t.getShortName().equals("NOP")){
+							t.setShortName("NOH");
+							t.setFullName("Hornets");
+							//teamAllInfo.remove(t);
+							break;
+						}
+							
+					}
+				}
+				
 				//读入球队的比赛信息
 				//dataBaseService.setArr(matchInfo);
 				//dataBaseService.setFilepath("E:/JavaWorkbench/NBAData/matches");
 				File file=new File("E:/JavaWorkbench/NBAData/matches");
 				String[] filelist=file.list();
 				ArrayList<String> seasonmatchlist=new ArrayList<String>();
+				ArrayList<String> realseasonmatch=new ArrayList<String>();
 				
 				for(String files:filelist){
-					if(files.contains(season))
+					if(files.split("_")[0].contains(season))
 						seasonmatchlist.add(files);
 				}
+				//对比赛信息进行重新排序
+				int startposition=0;
 				
-				for(String files:seasonmatchlist){					
+				for(int i=0;i<seasonmatchlist.size()-1;i++){
+					int month1=Integer.parseInt(seasonmatchlist.get(i).split("_")[1].split("-")[0]);
+					int month2=Integer.parseInt(seasonmatchlist.get(i+1).split("_")[1].split("-")[0]);
+					if((month2-month1)>2){
+						startposition=i+1;
+						break;
+					}
+				}
+				
+				System.out.println(startposition);
+				
+				for(int i=startposition;i<seasonmatchlist.size();i++){
+					realseasonmatch.add(seasonmatchlist.get(i));
+				}
+				
+				for(int i=0;i<startposition;i++){
+					realseasonmatch.add(seasonmatchlist.get(i));
+				}
+				
+				for(String files:realseasonmatch){					
 					ArrayList<String> singleMatchInfo=new ArrayList<String>();
-					teamInSingleMatchPO tempteam=new teamInSingleMatchPO();
 					DataBaseServiceImpl tempDataBaseService=new DataBaseServiceImpl<String>("E:/JavaWorkbench/NBAData/matches"+"/"+files,singleMatchInfo);
 					
 					tempDataBaseService.readFromfile();
@@ -55,28 +90,31 @@ public class TeamDataServiceImpl implements TeamDataService{
 					
 					//找到对应球队
 					for(teamPO teampo:teamAllInfo){
+						boolean ishome=true;
 						int position=0;
-						int singleMatchScore=0;
-						if(files.contains(teampo.getShortName())){
-						//if(teampo.getShortName().equals(names[0])){
-							tempteam.setSeason(files.split("_")[0]);
-							tempteam.setDate(files.split("_")[1]);
-							tempteam.setNames(files.split("_")[2]);
-							
+						int homeMatchScore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[0]);
+						int visitMatchScore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[1]);
+						int myscore=0;
+						
+						teamInSingleMatchPO tempteam=new teamInSingleMatchPO();
+						//if(files.contains(teampo.getShortName())){
+
+						if(teampo.getShortName().equals(names[0])){
 							
 							position=3;
-							singleMatchScore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[0]);
-							tempteam.setTotalScore(singleMatchScore);
-							teampo.setTotalScores(teampo.getTotalScores()+singleMatchScore);
+							//singleMatchScore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[0]);
+							//tempteam.setTotalScore(homeMatchScore);
+							teampo.setTotalScores(teampo.getTotalScores()+homeMatchScore);
 						}
 						
 						if(teampo.getShortName().equals(names[1])){
+							ishome=false;
 							for(int i=3;i<singleMatchInfo.size();i++){
 								if(singleMatchInfo.get(i).length()==3)
 									position=i+1;
 							}
-							singleMatchScore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[1]);
-							teampo.setTotalScores(teampo.getTotalScores()+singleMatchScore);
+							//singleMatchScore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[1]);
+							teampo.setTotalScores(teampo.getTotalScores()+visitMatchScore);
 						}
 						
 						if(position==0)
@@ -102,10 +140,12 @@ public class TeamDataServiceImpl implements TeamDataService{
 									oppopos=i+1;
 							}
 							opposcore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[1]);
+							myscore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[0]);
 							oppoteam.setTotalScores(opposcore);
 						}else{
 							oppopos=3;
 							opposcore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[0]);
+							myscore=Integer.parseInt(singleMatchInfo.get(0).split(";")[2].split("-")[1]);
 							oppoteam.setTotalScores(opposcore);
 						}
 						
@@ -135,11 +175,9 @@ public class TeamDataServiceImpl implements TeamDataService{
 						}
 						
 						
-						if(singleMatchScore>opposcore){
+						if(homeMatchScore>opposcore)
 							teampo.setWinMatches(teampo.getWinMatches()+1);
-							tempteam.setIsWin(true);
-						}else
-							tempteam.setIsWin(false);
+							
 							
 						
 						
@@ -182,6 +220,11 @@ public class TeamDataServiceImpl implements TeamDataService{
 							position++;
 						}
 						
+						tempteam.setSeason(files.split("_")[0]);
+						tempteam.setDate(files.split("_")[1]);
+						tempteam.setNames(files.split("_")[2]);
+						tempteam.setTotalScore(myscore);
+						tempteam.setIsWin(myscore>opposcore);
 						tempteam.setTotalAssists(TotalAssists);
 						tempteam.setTotalRebounds(TotalRebounds);
 						tempteam.setTotalRejections(TotalRejection);
@@ -209,13 +252,34 @@ public class TeamDataServiceImpl implements TeamDataService{
 						double oppoOffensiveRound=opposhots+0.4*oppofreethrows-1.07*((double)oppodefensiverebound/(double)(oppodefensiverebound+oppooffensiverebound))*(opposhots-opposhotsontarget);
 						
 						teampo.setOffensiveRound(teampo.getOffensiveRebound()+OffensiveRound);
-						teampo.setOffendEfficiency(teampo.getOffendEfficiency()+100.0*(double)singleMatchScore/(double)OffensiveRound);
-						teampo.setDefendEfficiency(teampo.getDefendEfficiency()+100.0*(double)singleMatchScore/(double)oppoOffensiveRound);
+						teampo.setOffendEfficiency(teampo.getOffendEfficiency()+100.0*(double)myscore/(double)OffensiveRound);
+						teampo.setDefendEfficiency(teampo.getDefendEfficiency()+100.0*(double)myscore/(double)oppoOffensiveRound);
 						
 						teampo.setOffendReboundEfficiency(teampo.getOffendReboundEfficiency()+(double)OffensiveRebound/(double)(OffensiveRebound+oppoteam.getDefensiveRebound()));
 						teampo.setDefendReboundEfficiency(teampo.getDefendReboundEfficiency()+(double)DefensiveRebound/(double)(DefensiveRebound+oppoteam.getOffensiveRebound()));
 						teampo.setStealEfficiency(teampo.getStealEfficiency()+100.0*(double)TotalSteals/(double)oppoOffensiveRound);
 						teampo.setAssistEfficiency(teampo.getAssistEfficiency()+100.0*(double)TotalAssists/(double)OffensiveRound);
+						
+						/*teamInSingleMatchPO tempteam=new teamInSingleMatchPO();
+						
+						tempteam.setSeason(files.split("_")[0]);
+						tempteam.setDate(files.split("_")[1]);
+						tempteam.setNames(files.split("_")[2]);
+						if(ishome){
+							tempteam.setTotalScore(homeMatchScore);
+							tempteam.setTotalAssists(TotalAssists);
+							tempteam.setTotalRebounds(TotalRebounds);
+							tempteam.setTotalRejections(TotalRejection);
+							tempteam.setTotalSteals(TotalSteals);
+							tempteam.setShotPercent((double)ShotsOnTargets/(double)TotalShots);
+							tempteam.setThreePointPercent((double)ThreePointShotsOnTargets/(double)TotalThreePointShots);
+							tempteam.setFreeThrowPercent((double)FreeThrowOnTargets/(double)TotalFreeThrows);
+							tempteam.setIsWin(homeMatchScore>visitMatchScore);
+							//后续补充所有球队信息
+						}else{
+							tempteam.setTotalScore(visitMatchScore);
+							tempteam.setTotalAssists(totalAssists);
+						}*/
 						
 						if(teampo.getRecentFive().size()<5){
 							ArrayList<teamInSingleMatchPO> temp=teampo.getRecentFive();
@@ -261,5 +325,19 @@ public class TeamDataServiceImpl implements TeamDataService{
 		
 		return teamAllInfo;
 		
+	}
+	
+	public void deleteTemp(String season){
+		File file=new File("tempdata");
+		String[] tempdata=file.list();
+		//boolean exist=false;//判断当赛季数据是否已经存在
+		
+		for(String datafile:tempdata){
+			if(datafile.contains("team")&&datafile.contains(season)){
+				File tempfile=new File("tempdata/"+datafile);
+				tempfile.delete();
+				break;
+			}
+		}
 	}
 }

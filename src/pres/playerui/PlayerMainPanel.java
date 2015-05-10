@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -36,6 +37,7 @@ public class PlayerMainPanel extends CommonPanel{
 	CommonButton mostprogressed;
 	CommonButton seasonhot;
 	CommonButton dailyhot;
+	CommonButton upgrade;
 	CommonTable table;
 	String season="13-14";//默认展示13-14赛季
 	Object[][] playerdata;
@@ -44,6 +46,8 @@ public class PlayerMainPanel extends CommonPanel{
 	JComboBox seasons;
 	JComboBox AT;//average or total
 	JLabel playerinfo;
+	JLabel AorT;
+	JLabel chooseseason;
 	
 	boolean isUP=true;
 	boolean isTotal=true;
@@ -58,11 +62,24 @@ public class PlayerMainPanel extends CommonPanel{
 		
 		String[] sorts={"球员名称","所属球队","参赛场数","先发场数","篮板数","助攻数","在场时间","投篮命中率","三分命中率","罚球命中率","进攻数","防守数","抢断数","盖帽数","失误数","犯规数","得分","效率","GmSc效率值","真实命中率","投篮效率","篮板率","进攻篮板率","防守篮板率","助攻率","抢断率","盖帽率","失误率","使用率"};
 		Font font1=new Font("微软雅黑",Font.BOLD,12);
-		
+		Font font2=new Font("微软雅黑",Font.BOLD,15);
+
 		playerinfo=new JLabel(new ImageIcon("graphics/detailpanel/playerinfo_label.png"));
 		playerinfo.setBounds(500, 20, 180, 45);
 		playerinfo.setVisible(true);
 		functionlabel.add(playerinfo);
+		
+		AorT=new JLabel("总和/平均");
+		AorT.setFont(font2);
+		AorT.setBounds(40, 150, 100, 30);
+		AorT.setVisible(true);
+		functionlabel.add(AorT);
+		
+		chooseseason=new JLabel("选择赛季");
+		chooseseason.setFont(font2);
+		chooseseason.setBounds(45, 220, 100, 30);
+		chooseseason.setVisible(true);
+		functionlabel.add(chooseseason);
 		
 		/*sortby=new JComboBox(sorts);
 		sortby.setBounds(140, 150, 120, 35);
@@ -82,7 +99,7 @@ public class PlayerMainPanel extends CommonPanel{
 		functionlabel.add(AT);
 		
 		seasons=new JComboBox(new String[]{"12-13","13-14","14-15"});
-		seasons.setBounds(140, 300, 120, 35);
+		seasons.setBounds(140, 220, 120, 35);
 		seasons.setFont(font1);
 		seasons.setBorder(BorderFactory.createEmptyBorder());
 		seasons.setSelectedItem(null);
@@ -102,6 +119,12 @@ public class PlayerMainPanel extends CommonPanel{
 		downsort.addActionListener(new downsortlistener());
 		downsort.setVisible(true);
 		functionlabel.add(downsort);*/
+		
+		upgrade=new CommonButton("graphics/actionbutton/upgrade.png","graphics/actionbutton/upgrade.png","graphics/actionbutton/upgrade_pressed.png");
+		upgrade.setBounds(20, 300, 240, 60);
+		upgrade.addActionListener(new upgradelistener());
+		upgrade.setVisible(true);
+		functionlabel.add(upgrade);
 		
 		mostprogressed=new CommonButton("graphics/actionbutton/most_progressed.png","graphics/actionbutton/most_progressed.png","graphics/actionbutton/most_progressed_pressed.png");
 		mostprogressed.setBounds(20, 400, 240, 60);
@@ -312,13 +335,35 @@ public class PlayerMainPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			season=seasons.getSelectedItem().toString();
+			if(seasons.getSelectedItem()!=null)
+				season=seasons.getSelectedItem().toString();
+			else
+				season="13-14";
 			
 			functionlabel.remove(table);
 			functionlabel.remove(scroll);
 			
+			playerlist.clear();
+			playerlist=playerblservice.findAll(season);
+
+			addTable(playerlist);
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
+	
+	class upgradelistener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			functionlabel.remove(table);
+			functionlabel.remove(scroll);
+			
+			playerblservice.deleteTemp(season);
 			playerlist=playerblservice.findAll(season);
 			addTable(playerlist);
+			
 			// TODO Auto-generated method stub
 			
 		}
@@ -329,6 +374,7 @@ public class PlayerMainPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
+			
 			Constant.mainframe.showSeasonHotPlayerPanel(playerlist);
 			// TODO Auto-generated method stub
 			
@@ -351,8 +397,47 @@ public class PlayerMainPanel extends CommonPanel{
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			String date="01-02";//先设为1月2日
-			Constant.mainframe.showDailyHotPlayerPanel(date);
+			//String date="01-02";//先设为1月2日
+			String date;
+			if(seasons.getSelectedItem()!=null)
+				season=seasons.getSelectedItem().toString();
+			
+			
+			File matchfile=new File("E:/JavaWorkbench/NBAData/matches");
+			String[] matchlist=matchfile.list();
+			ArrayList<String> seasonmatchlist=new ArrayList<String>();
+			ArrayList<String> realseasonmatch=new ArrayList<String>();
+
+			for(String singlematch:matchlist){
+				if(singlematch.split("_")[0].contains(season))
+					seasonmatchlist.add(singlematch);
+			}
+			
+			//对比赛信息进行重新排序
+			int startposition=0;
+			
+			for(int i=0;i<seasonmatchlist.size()-1;i++){
+				int month1=Integer.parseInt(seasonmatchlist.get(i).split("_")[1].split("-")[0]);
+				int month2=Integer.parseInt(seasonmatchlist.get(i+1).split("_")[1].split("-")[0]);
+				if((month2-month1)>2){
+					startposition=i+1;
+					break;
+				}
+			}
+						
+			for(int i=startposition;i<seasonmatchlist.size();i++){
+				realseasonmatch.add(seasonmatchlist.get(i));
+			}
+			
+			for(int i=0;i<startposition;i++){
+				realseasonmatch.add(seasonmatchlist.get(i));
+			}
+			
+			date=realseasonmatch.get(realseasonmatch.size()-1).split("_")[1];
+			
+			System.out.println(date);
+			System.out.println(season);
+			Constant.mainframe.showDailyHotPlayerPanel(season,date);
 			// TODO Auto-generated method stub
 			
 		}

@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -63,15 +64,31 @@ public class SingleMatchPanel extends CommonPanel{
 		JSVGCanvas canvashome=new JSVGCanvas();
 		JSVGCanvas canvasvisit=new JSVGCanvas();
 		
-		canvashome.setURI("file:/E:/JavaWorkbench/NBAData/teams/"+matchinfo.home+".svg");
-		canvashome.setBounds(150, 90, 150, 150);
-		canvashome.setVisible(true);
-		functionlabel.add(canvashome);
+		if(matchinfo.home.equals("NOH")){
+			JLabel NOH=new JLabel(new ImageIcon("E:/JavaWorkbench/NBAData/teams/NOH.png"));
+			NOH.setBounds(150, 90, 150, 150);
+			NOH.setVisible(true);
+			functionlabel.add(NOH);
+		}else{
+			canvashome.setURI("file:/E:/JavaWorkbench/NBAData/teams/"+matchinfo.home+".svg");
+			canvashome.setBounds(150, 90, 150, 150);
+			canvashome.setVisible(true);
+			functionlabel.add(canvashome);
+		}
 		
-		canvasvisit.setURI("file:/E:/JavaWorkbench/NBAData/teams/"+matchinfo.visiting+".svg");
-		canvasvisit.setBounds(720, 90, 150, 150);
-		canvasvisit.setVisible(true);
-		functionlabel.add(canvasvisit);
+		if(matchinfo.visiting.equals("NOH")){
+			JLabel NOH=new JLabel(new ImageIcon("E:/JavaWorkbench/NBAData/teams/NOH.png"));
+			NOH.setBounds(720, 90, 150, 150);
+			NOH.setVisible(true);
+			functionlabel.add(NOH);
+		}else{
+			canvasvisit.setURI("file:/E:/JavaWorkbench/NBAData/teams/"+matchinfo.visiting+".svg");
+			canvasvisit.setBounds(720, 90, 150, 150);
+			canvasvisit.setVisible(true);
+			functionlabel.add(canvasvisit);
+		}
+		
+		
 		
 		spes=new JComboBox(new String[]{"得分","篮板数","抢断数","盖帽数","助攻数","命中率","投篮命中数/出手数","三分命中数/出手数","罚球命中数/出手数","进攻/防守篮板数"});
 		spes.setBounds(452, 260, 120, 35);

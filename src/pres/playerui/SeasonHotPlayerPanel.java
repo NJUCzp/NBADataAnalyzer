@@ -35,6 +35,7 @@ public class SeasonHotPlayerPanel extends CommonPanel{
 	CommonButton screen;
 	CommonTable result;
 	JLabel playerinfo;
+	JLabel options;
 	
 	ArrayList<playerVO> playervolist;
 	ArrayList<playerVO> firstfive;
@@ -47,10 +48,18 @@ public class SeasonHotPlayerPanel extends CommonPanel{
 		firstfive=new ArrayList<playerVO>();
 		playerblservice=new PlayerBL();
 		
+		Font font2=new Font("微软雅黑",Font.BOLD,15);
+		
 		playerinfo=new JLabel(new ImageIcon("graphics/detailpanel/playerinfo_label.png"));
 		playerinfo.setBounds(500, 20, 180, 45);
 		playerinfo.setVisible(true);
 		functionlabel.add(playerinfo);
+		
+		options=new JLabel("筛选条件:");
+		options.setFont(font2);
+		options.setBounds(330, 150, 100, 30);
+		options.setVisible(true);
+		functionlabel.add(options);
 		
 		String[] screenby={"场均得分","场均篮板","场均助攻","场均盖帽","场均抢断","三分命中率","投篮命中率","罚球命中率"};
 		ScreenBy=new JComboBox(screenby);
@@ -91,7 +100,13 @@ public class SeasonHotPlayerPanel extends CommonPanel{
 		default:{}
 		}
 		
+		
 		playervolist=playerblservice.sortBy(sortby, false,playervolist);
+		
+		for(playerVO p:playervolist){
+			System.out.println(p.totalScores);
+			System.out.println((double)p.totalScores/(double)p.totalMatches);
+		}
 		
 		if(firstfive.size()==0){
 			for(int i=0;i<5;i++){

@@ -62,8 +62,12 @@ public class PlayerBLFind {
 
 	}
 	
-	public ArrayList<playerInSingleMatchPO> findByDate(String date){
-		return playerdataservice.findByDate(date);
+	public void deleteTemp(String season){
+		playerdataservice.deleteTemp(season);
+	}
+	
+	public ArrayList<playerInSingleMatchPO> findByDate(String season,String date){
+		return playerdataservice.findByDate(season,date);
 	}
 
 }
